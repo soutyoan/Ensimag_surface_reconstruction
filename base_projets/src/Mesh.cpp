@@ -9,7 +9,7 @@
 using namespace glm;
 using namespace std;
 
-Mesh::Mesh(const char* filename) 
+Mesh::Mesh(const char* filename)
 {
 	int j = 0;
     unsigned int tmp;
@@ -18,7 +18,7 @@ Mesh::Mesh(const char* filename)
 	int   error;
 	float r;
 
-	if((file=fopen(filename,"r"))==NULL) 
+	if((file=fopen(filename,"r"))==NULL)
 	{
 		std::cout << "Unable to read : " << filename << std::endl;
 	}
@@ -31,20 +31,23 @@ Mesh::Mesh(const char* filename)
     glm::uint nb_vertices, nb_faces;
 
 	error = fscanf(file,"OFF\n%d %d %d\n",&(nb_vertices),&(nb_faces),&tmp);
-	if(error==EOF) 
+
+	if(error==EOF)
 	{
 		std::cout << "Unable to read : " << filename << std::endl;
 	}
+
+	cout << nb_faces << " " << nb_vertices << "\n";
 
     m_positions.resize(nb_vertices);
     m_normals.resize(nb_vertices);
     m_indices.resize(nb_faces*3);
 
 	// reading vertices
-	for(int i=0;i<nb_vertices;++i) 
+	for(int i=0;i<nb_vertices;++i)
 	{
         error = fscanf(file,"%f %f %f\n",&(m_positions[i][0]),&(m_positions[i][1]),&(m_positions[i][2]));
-		if(error==EOF) 
+		if(error==EOF)
 		{
 			std::cout << "Unable to read vertices of : " << filename << std::endl;
 			exit(EXIT_FAILURE);
@@ -53,17 +56,17 @@ Mesh::Mesh(const char* filename)
 
 	// reading faces
 	j = 0;
-	for(int i=0;i<nb_faces;++i) 
+	for(int i=0;i<nb_faces;++i)
 	{
         error = fscanf(file,"%d %d %d %d\n",&tmp,&(m_indices[j]),&(m_indices[j+1]),&(m_indices[j+2]));
 
-		if(error==EOF) 
+		if(error==EOF)
 		{
 			std::cout << "Unable to read faces of : " << filename << std::endl;
 			exit(EXIT_FAILURE);
 		}
 
-		if(tmp!=3) 
+		if(tmp!=3)
 		{
 			printf("Error : face %d is not a triangle (%d polygonal face!)\n",i/3,tmp);
 			exit(EXIT_FAILURE);
