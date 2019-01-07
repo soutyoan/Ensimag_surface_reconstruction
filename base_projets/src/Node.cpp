@@ -14,7 +14,7 @@ void Node::createQ(){
 }
 
 void Node::createChilds(){
-
+	
 }
 
 float Node::calculateWiX(){
@@ -46,7 +46,6 @@ vec2 Node::MPUapprox(vec3 x, float eps0){
         SGlobal[1] = 0;
     }
     return SGlobal;
-
 }
 
 Node::~Node(){
