@@ -13,7 +13,7 @@
 #include "Box.h"
 
 // Optimisation library get from https://nlopt.readthedocs.io/en/latest/#documentation-and-mailing-lists
-#include <nlopt.h>
+// #include <nlopt.h>
 
 using namespace std;
 using namespace glm;
@@ -21,7 +21,7 @@ using namespace glm;
 typedef struct {
     vector<float> A;
     vector<float> b;
-    float c; 
+    float c;
 } my_data;
 
 class Node{

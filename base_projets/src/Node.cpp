@@ -6,41 +6,41 @@ float norm(vec3 x, vec3 y){
 
 // Function a <Local fit of a general quadric>
 // Paper page 4
-float funcToOpt(const std::vector<float> &x, void* data){
-	/*
-	Parameters :
-	A in order
-		A11 A12 A13 A21 A22 A23 A31 A32 A33
-	B : 3 coefficients
-	C : scalar
-	*/
-	my_data *d = reinterpret_cast<my_data*>(data);
-	vector<float> A = d->A;
-	vector<float> b = d->b;
-	float c = d->c;
-
-	return x[0] * (x[0] * A[0] + x[1] * A[1] + x[2] * A[2]) +
-		   x[1] * (x[0] * A[3] + x[1] * A[4] + x[2] * A[5]) +
-		   x[2] * (x[0] * A[6] + x[1] * A[7] + x[2] * A[8]) +
-		   b[0] * x[0] + b[1] * x[1] + b[2] * x[2] + c;
-}
-
-// Action of optimizing the above <funcToOpt> function
-// thanks to the library NLopt
-void optimizeFunction(vec3 vx){
-	nlopt::opt = opt(nlopt::LN_COBYLA, 2);
-	opt.set_low_bounds(lb);
-	opt.set_min_objective(funcToOpt, NULL);
-	opt.set_xtol_rel(1e-4);
-
-	vector<float> x(3);
-	for (int i = 0; i < 3; i++){
-		x[i] = vx[i];
-	}
-
-	double minf;
-	nlopt::result = opt.optimize(x, minf);
-}
+// float funcToOpt(const std::vector<float> &x, void* data){
+// 	/*
+// 	Parameters :
+// 	A in order
+// 		A11 A12 A13 A21 A22 A23 A31 A32 A33
+// 	B : 3 coefficients
+// 	C : scalar
+// 	*/
+// 	my_data *d = reinterpret_cast<my_data*>(data);
+// 	vector<float> A = d->A;
+// 	vector<float> b = d->b;
+// 	float c = d->c;
+//
+// 	return x[0] * (x[0] * A[0] + x[1] * A[1] + x[2] * A[2]) +
+// 		   x[1] * (x[0] * A[3] + x[1] * A[4] + x[2] * A[5]) +
+// 		   x[2] * (x[0] * A[6] + x[1] * A[7] + x[2] * A[8]) +
+// 		   b[0] * x[0] + b[1] * x[1] + b[2] * x[2] + c;
+// }
+//
+// // Action of optimizing the above <funcToOpt> function
+// // thanks to the library NLopt
+// void optimizeFunction(vec3 vx){
+// 	nlopt::opt = opt(nlopt::LN_COBYLA, 2);
+// 	opt.set_low_bounds(lb);
+// 	opt.set_min_objective(funcToOpt, NULL);
+// 	opt.set_xtol_rel(1e-4);
+//
+// 	vector<float> x(3);
+// 	for (int i = 0; i < 3; i++){
+// 		x[i] = vx[i];
+// 	}
+//
+// 	double minf;
+// 	nlopt::result = opt.optimize(x, minf);
+// }
 
 Node::Node(){
 	epsi = 0.1;
@@ -87,9 +87,11 @@ float Node::calculateWiX(vec3 vx){
 
 	float x = 3 * norm(ci, vx)/Ri;
 
-	// TODO : Apply b spline to x
+	// Second formula from the paper
+	float num = (Ri - norm(vx, ci));
+	num = (num>0) ? num : 0;
 
-	return 0;
+	return num/(Ri * norm(vx, ci));
 }
 
 // On retourne SwQ et Sw dans le vec2
