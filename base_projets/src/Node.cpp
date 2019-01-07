@@ -69,6 +69,42 @@ float Node::calculateQi(vec3 x){
 	return 0;
 }
 
+// Return values should be a vector of size 6
+// TODO : Find a better and faster way to calculate this.
+void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &returnValues){
+
+	int minimumDistance = 1000000;
+
+	vector<int> return_indices(6);
+	bool flag;
+	vec3 centerBox = vec3(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
+
+	// We are looking for the 6 closest points
+	for (int p = 0; p < 6; p++){
+		minimumDistance = 1000000;
+		for (int i = 0; i < m_vertices.size(); i++){
+			flag = false;
+			for (int j = 0; j < p; j++){
+				if (i == return_indices[j]){
+					flag = true;
+					break;
+				}
+			}
+
+			if (flag){
+				continue;
+			}
+
+			float n = norm(m_vertices[i], centerBox);
+			if (n < minimumDistance){
+				minimumDistance = n;
+				return_indices[p] = i;
+			}
+		}
+		returnValues[p] = m_vertices[return_indices[p]];
+	}
+}
+
 void Node::setIndices(vector<vec3> &m_vertices, Node& child, vec3 centerNewBox, float radius){
 	for (int i = 0; i < indices.size(); i++){
 		vec3 currentPoint = m_vertices[indices[i]];
