@@ -26,7 +26,8 @@ public:
     float ly; // length of the box in y
     float lz; // length of the box in z
 
-    Box(float _x, float _y, float _z, float _lx, float _ly, float _lz); 
+    Box(float _x, float _y, float _z, float _lx, float _ly, float _lz);
+    Box(); 
 
 
 };

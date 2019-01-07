@@ -11,6 +11,7 @@
 
 #include <Mesh.h>
 #include <ImplicitFunction.h>
+#include "Box.h"
 
 using namespace std;
 using namespace glm;
@@ -20,13 +21,15 @@ class Node{
 public:
     float epsi; // Epsilon i
     vector<float>* Q; // La fonction d'approximation Q
-    vector<Node>* childs; // Childs of this node
+    vector<Node> childs; // Childs of this node
     bool isLeaf;
+    Box b;
 
     Node();
+    Node(Box b);
     vec2 MPUapprox(vec3 x, float eps0);
     void createQ();
-    void createChilds();
+    vec2 createChilds(vec3 x, float eps0);
     float calculateWiX();
     ~Node();
 };
