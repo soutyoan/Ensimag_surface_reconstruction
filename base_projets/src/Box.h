@@ -1,6 +1,8 @@
 #ifndef BOX_H
 #define BOX_H
 
+#include <ostream>
+
 using namespace std;
 
 class Box {
