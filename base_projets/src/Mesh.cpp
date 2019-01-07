@@ -610,8 +610,9 @@ float Mesh::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0){
 	}
 
 	Box broot(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
-	Node n(broot);
 
-	vec2 SwqSw = n.MPUapprox(x, eps0);
+	root.b = broot;
+
+	vec2 SwqSw = root.MPUapprox(x, eps0);
 	return SwqSw[1]/SwqSw[0];
 }

@@ -5,13 +5,11 @@ float norm(vec3 x, vec3 y){
 }
 
 Node::Node(){
-    Q = new vector<float>();
+
 }
 
 // PARENT CONSTRUCTOR strange before c++11, must do it like this sorry
 Node::Node(Box b){
-	Q = new vector<float>();
-
 	this->b = b;
 }
 
@@ -19,11 +17,14 @@ void Node::createQ(){
 
 }
 
-vec2 Node::createChilds(vec3 vx, float eps0){
+float Node::calculateQi(vec3 x){
+	// TODO: calculate result
+	return 0;
+}
+
+void Node::createChilds(){
 	// We create subchilds
 	// 8 in total, 2 in each direction
-
-	vec2 SGlobal(0, 0);
 
 	for (int x = 0; x < 2; x++){
 		for (int y = 0; y < 2; y++){
@@ -34,29 +35,40 @@ vec2 Node::createChilds(vec3 vx, float eps0){
 				Box b(_x, _y, _z, b.lx/2, b.ly/2, b.lz/2);
 				Node n(b);
 				childs.push_back(n);
-				SGlobal += n.MPUapprox(vx, eps0);
 			}
 		}
 	}
 }
 
-float Node::calculateWiX(){
+float Node::calculateWiX(vec3 vx){
+	// Ci is the center of the box
+	vec3 ci(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
+	// Radius of the cube
+	float Ri = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
 
+	float x = 3 * norm(ci, vx)/Ri;
+
+	// TODO : Apply b spline to x
+
+	return 0;
 }
 
 // On retourne SwQ et Sw dans le vec2
 vec2 Node::MPUapprox(vec3 x, float eps0){
+
+	cout << "HELLO\n" ;
+
     vec2 SGlobal(0, 0);
 	if (norm(x, x) > R) {
 		return SGlobal;
 	}
-    if (Q->size() == 0){ // La fonction n'est pas encore créée
+    if (Q.size() == 0){ // La fonction n'est pas encore créée
         createQ();
     }
     // Le nouveau epsilon a été calculé
     if (epsi > eps0){
         if (childs.size() == 0){
-            createChilds(x, eps0);
+            createChilds();
         }
         for (int i = 0; i < childs.size(); i++){ // iterere sur les enfants
             vec2 S = childs.at(i).MPUapprox(x, eps0);
@@ -65,12 +77,13 @@ vec2 Node::MPUapprox(vec3 x, float eps0){
         }
     } else {
         isLeaf = true;
-        SGlobal[0] = 0;
-        SGlobal[1] = 0;
+		float wix = this->calculateWiX(x);
+        SGlobal[0] += wix * calculateQi(x);
+        SGlobal[1] += wix;
     }
     return SGlobal;
 }
 
 Node::~Node(){
-    delete Q;
+
 }

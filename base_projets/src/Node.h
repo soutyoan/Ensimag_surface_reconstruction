@@ -19,7 +19,7 @@ class Node{
 
 public:
     float epsi; // Epsilon i
-    vector<float>* Q; // La fonction d'approximation Q
+    vector<float> Q; // La fonction d'approximation Q
     vector<Node> childs; // Childs of this node
     bool isLeaf;
     Box b;
@@ -31,8 +31,9 @@ public:
     vec2 MPUapprox(vec3 x, float eps0);
 
     void createQ();
-    vec2 createChilds(vec3 x, float eps0);
-    float calculateWiX();
+    void createChilds();
+    float calculateWiX(vec3 vx);
+    float calculateQi(vec3 x); 
     ~Node();
 };
 
