@@ -613,6 +613,6 @@ float Mesh::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0){
 
 	root.b = broot;
 
-	vec2 SwqSw = root.MPUapprox(x, eps0);
+	vec2 SwqSw = root.MPUapprox(x, eps0, mesh.m_positions);
 	return SwqSw[1]/SwqSw[0];
 }

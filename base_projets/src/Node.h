@@ -31,18 +31,20 @@ public:
     vector<float> Q; // La fonction d'approximation Q
     vector<Node> childs; // Childs of this node
     bool isLeaf;
+    vector<int> indices;
     Box b;
 
     Node();
     Node(Box b);
 
     // Functions from the MPU_omplicit paper, page 3
-    vec2 MPUapprox(vec3 x, float eps0);
+    vec2 MPUapprox(vec3 x, float eps0, vector<vec3> &m);
 
     void createQ();
-    void createChilds();
+    void createChilds(vector<vec3> &m);
     float calculateWiX(vec3 vx);
     float calculateQi(vec3 x);
+    void setIndices(vector<vec3> &m, Node& child, vec3 centerNewBox, float radius);
     ~Node();
 };
 

@@ -53,18 +53,34 @@ Node::Node(Box b){
 }
 
 void Node::createQ(){
-
+	vec3 currentPoint = vec3(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
+	for (int i = 0; i < 2; i++){
+		for (int j = 0; j < 2; j++){
+			for (int k = 0; k < 2; k++){
+				currentPoint = vec3(b.x + i * b.lx,
+											b.y + j * b.ly,
+											b.z + k * b.lz);
+			}
+		}
+	}
 }
 
 float Node::calculateQi(vec3 x){
-	// TODO: calculate result
 	return 0;
 }
 
-void Node::createChilds(){
+void Node::setIndices(vector<vec3> &m_vertices, Node& child, vec3 centerNewBox, float radius){
+	for (int i = 0; i < indices.size(); i++){
+		vec3 currentPoint = m_vertices[indices[i]];
+		if (norm(currentPoint, centerNewBox) < radius){
+			child.indices.push_back(indices[i]);
+		}
+	}
+}
+
+void Node::createChilds(vector<vec3> &m_vertices){
 	// We create subchilds
 	// 8 in total, 2 in each direction
-
 	for (int x = 0; x < 2; x++){
 		for (int y = 0; y < 2; y++){
 			for (int z = 0; z < 2; z++){
@@ -73,6 +89,10 @@ void Node::createChilds(){
 				float _z = b.z + z/2 * b.lz;
 				Box b(_x, _y, _z, b.lx/2, b.ly/2, b.lz/2);
 				Node n(b);
+				vec3 centerNewBox(_x + (1 + 2 * x) * b.lx/4, _y + (1 + 2 * y)
+					* b.ly/4, _z + (1 + 2 * z) * b.lz/4);
+				float radius = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
+				setIndices(m_vertices, n, centerNewBox, radius);
 				childs.push_back(n);
 			}
 		}
@@ -95,7 +115,7 @@ float Node::calculateWiX(vec3 vx){
 }
 
 // On retourne SwQ et Sw dans le vec2
-vec2 Node::MPUapprox(vec3 x, float eps0){
+vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices){
 
 	cout << "HELLO\n" ;
 
@@ -109,10 +129,10 @@ vec2 Node::MPUapprox(vec3 x, float eps0){
     // Le nouveau epsilon a été calculé
     if (epsi > eps0){
         if (childs.size() == 0){
-            createChilds();
+            createChilds(m_vertices);
         }
         for (int i = 0; i < childs.size(); i++){ // iterere sur les enfants
-            vec2 S = childs.at(i).MPUapprox(x, eps0);
+            vec2 S = childs.at(i).MPUapprox(x, eps0, m_vertices);
             SGlobal[0] += S[0];
             SGlobal[1] += S[1];
         }
