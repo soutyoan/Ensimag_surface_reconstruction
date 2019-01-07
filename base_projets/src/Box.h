@@ -1,19 +1,7 @@
 #ifndef BOX_H
 #define BOX_H
 
-#include <vector>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_precision.hpp> //i32vec3
-#include <cstdlib>
-#include <iostream>
-#include <math.h>
-#include <omp.h>
-
-#include <Mesh.h>
-#include <ImplicitFunction.h>
-
 using namespace std;
-using namespace glm;
 
 class Box {
 
@@ -27,8 +15,7 @@ public:
     float lz; // length of the box in z
 
     Box(float _x, float _y, float _z, float _lx, float _ly, float _lz);
-    Box(); 
-
+    Box();
 
 };
 

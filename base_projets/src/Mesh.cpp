@@ -584,3 +584,34 @@ void Mesh::ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, cons
 
     cerr << "no solution found in marching tetrahedron !!" << endl;
 }
+
+// MPU approximation
+float Mesh::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0){
+
+	// First we need to recreate the root node.
+
+	// We need to find the bounding box
+	float minX = 100000;
+	float minY = 100000;
+	float minZ = 100000;
+	float maxX = -100000;
+	float maxY = -100000;
+	float maxZ = -100000;
+
+	// Iterate through all vertices to find it
+	for (int i = 0; i < mesh.m_positions.size(); i++){
+		if (mesh.m_positions[i][0] < minX){minX = mesh.m_positions[i][0];}
+		if (mesh.m_positions[i][1] < minY){minY = mesh.m_positions[i][1];}
+		if (mesh.m_positions[i][2] < minZ){minZ = mesh.m_positions[i][2];}
+
+		if (mesh.m_positions[i][0] > maxX){minX = mesh.m_positions[i][0];}
+		if (mesh.m_positions[i][1] > maxY){minY = mesh.m_positions[i][1];}
+		if (mesh.m_positions[i][2] > maxZ){minZ = mesh.m_positions[i][2];}
+	}
+
+	Box broot(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
+	Node n(broot);
+
+	vec2 SwqSw = n.MPUapprox(x, eps0);
+	return SwqSw[1]/SwqSw[0];
+}

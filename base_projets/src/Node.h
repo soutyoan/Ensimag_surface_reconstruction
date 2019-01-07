@@ -9,7 +9,6 @@
 #include <math.h>
 #include <omp.h>
 
-#include <Mesh.h>
 #include <ImplicitFunction.h>
 #include "Box.h"
 
@@ -27,12 +26,14 @@ public:
 
     Node();
     Node(Box b);
+
+    // Functions from the MPU_omplicit paper, page 3
     vec2 MPUapprox(vec3 x, float eps0);
+
     void createQ();
     vec2 createChilds(vec3 x, float eps0);
     float calculateWiX();
     ~Node();
 };
-
 
 #endif

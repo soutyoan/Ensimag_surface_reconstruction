@@ -7,6 +7,7 @@
 #include <string>
 
 #include <AbstractMesh.h>
+#include "Node.h"
 
 class ImplicitFunction;
 
@@ -17,9 +18,6 @@ public:
     // Constructors
     Mesh(){}                        /// Empty constructor
     Mesh(const char* filename);     /// Imports a mesh from an OFF File
-
-
-
 
     // utils
     void RemoveDouble(float epsilon = 1e-5);        /// Remove duplicated points
@@ -41,8 +39,12 @@ public:
             , const unsigned int resY = 100
             , const unsigned int resZ = 100);           /// Implements the marching cube algorithm
 
-    static void ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const glm::vec3 p[]);        /// Processes a tetrahedron during marching tetrahedron algorithm
 
+    /// Processes a tetrahedron during marching tetrahedron algorithm
+    static void ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const glm::vec3 p[]);
+
+    Node root;
+    float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0);
 };
 
 #endif // MESH_H
