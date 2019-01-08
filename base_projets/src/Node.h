@@ -45,7 +45,9 @@ public:
     float calculateWiX(vec3 vx);
     float calculateQi(vec3 x);
     void setIndices(vector<vec3> &m, Node& child, vec3 centerNewBox, float radius);
-    void getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &returnValues); 
+    void getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_normals, vector<vec3> &returnValues, vector<vec3> &returnNormals);
+    vec3 getQpoint(int i);
+    vec3 getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals, vector<vec3> &qVec);
     ~Node();
 };
 

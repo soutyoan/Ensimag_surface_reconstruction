@@ -52,26 +52,9 @@ Node::Node(Box b){
 	this->b = b;
 }
 
-void Node::createQ(){
-	vec3 currentPoint = vec3(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
-	for (int i = 0; i < 2; i++){
-		for (int j = 0; j < 2; j++){
-			for (int k = 0; k < 2; k++){
-				currentPoint = vec3(b.x + i * b.lx,
-											b.y + j * b.ly,
-											b.z + k * b.lz);
-			}
-		}
-	}
-}
-
-float Node::calculateQi(vec3 x){
-	return 0;
-}
-
 // Return values should be a vector of size 6
 // TODO : Find a better and faster way to calculate this.
-void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &returnValues){
+void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_normals, vector<vec3> &returnValues, vector<vec3> &returnNormals){
 
 	int minimumDistance = 1000000;
 
@@ -102,7 +85,49 @@ void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &return
 			}
 		}
 		returnValues[p] = m_vertices[return_indices[p]];
+		returnNormals[p] = m_normals[return_indices[p]];
 	}
+}
+
+vec3 Node::getQpoint(int i){
+	if (i == 0){
+		 return vec3(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
+	}
+	i = i-1;
+	return vec3(b.x + (int)(i/4) * b.lx, // 0 0 0 0 1 1 1 1
+					b.y + (int)((i%4)/2) * b.ly, // 0 0 1 1 0 0 1 1
+					b.z + (i%2) * b.lz); // 0 1 0 1 0 1 0 1
+}
+
+vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals, vector<vec3> &qVec){
+	vector<vec3> p(6);
+	vector<vec3> n(6);
+
+	getClosestPointsInBall(m_vertices, m_normals, p, n);
+
+	for (int i = 0; i < 9; i++){
+		vec3 q = getQpoint(i);
+		bool signPositive = dot(n[0], (q - p[0])) > 0;
+		bool addQ = true;
+		for (int j = 1; j < 6; j++){
+			bool currentSign = dot(n[j], (q - p[j])) > 0;
+			if (currentSign != signPositive){
+				addQ = false;
+				break;
+			}
+		}
+		if (addQ){
+			qVec.push_back(q);
+		}
+	}
+}
+
+void Node::createQ(){
+
+}
+
+float Node::calculateQi(vec3 x){
+	return 0;
 }
 
 void Node::setIndices(vector<vec3> &m_vertices, Node& child, vec3 centerNewBox, float radius){
