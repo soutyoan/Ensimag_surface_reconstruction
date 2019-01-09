@@ -145,7 +145,7 @@ int main()
     m.ColorFromNormals();
 
     vec3 vx(0, 0, 0);
-    // m.evaluateMPUapprox(m, vx, 0.01);
+    m.evaluateMPUapprox(m, vx, 0.01);
 
     if (OUTPUT){
         // Output to folder

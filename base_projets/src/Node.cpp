@@ -109,7 +109,7 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 }
 
 float Node::calculateQ(vec3 x){
-	return Q.calculate(x); 
+	return Q.calculate(x);
 }
 
 void Node::setIndices(vector<vec3> &m_vertices, Node& child, vec3 centerNewBox, float radius){
@@ -181,6 +181,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
         }
     } else {
         isLeaf = true;
+		cout << b << "\n";
 		float wix = this->calculateWiX(x);
         SGlobal[0] += wix * calculateQ(x);
         SGlobal[1] += wix;

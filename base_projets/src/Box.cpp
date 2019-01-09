@@ -19,11 +19,12 @@ Box::Box(){
 }
 
 std::ostream& operator<<(std::ostream &strm, const Box &b) {
-  return strm << "Box \n : "
-    << "x " << b.x << "\n"
-    << "y " << b.y << "\n"
-    << "z " << b.z << "\n"
-    << "lx " << b.lx << "\n"
-    << "ly " << b.ly << "\n"
-    << "lz " << b.lz << "\n";
+    strm << "Box : \n"
+        << "x " << b.x << "\n"
+        << "y " << b.y << "\n"
+        << "z " << b.z << "\n"
+        << "lx " << b.lx << "\n"
+        << "ly " << b.ly << "\n"
+        << "lz " << b.lz << "\n";
+    return strm;
 }
