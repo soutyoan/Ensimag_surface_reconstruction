@@ -104,12 +104,43 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 	}
 }
 
-void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
+vector<float> compute_gradient(vector<vec3> &qvector, vector<vec3> &pvector, LocalShapeFunction &Q, vector<float> &Ws, float W) {
+	vector<float> res(0, 13);
+	vector<vec3>::iterator pIt;
+	vector<vec3>::iterator qIt;
+	vector<float>::iterator wIt;
+	int m = qvector.size();
+	for (int i=0; i<13; i++) {
+		// TODO : compute gradient vector
+	}
+}
 
+float norm(vector<float> x) {
+	// TODO : computation of norm of vector
+}
+
+void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
+	// TODO : init those vectors
+	vector<vec3> qvector;
+	vector<vec3> pvector;
+	vector<float> Ws;
+	float W;
+	// gradient descent algorithm to find best Q function
+	vector<float> _a0(1, 9);
+	vector<float> _b0(1, 3);
+	Q.create(_a0, _b0, 1.0f);
+	vector<float> Xk(1, 13);
+	vector<float> gradXk = compute_gradient(qvector, pvector, this->Q, Ws, W);
+	while (norm(gradXk) > EPS) {
+		// TODO : directions descent algo
+		// direction computation Dk
+		// linear research Ak
+		// Updating Xk, gradXk and Q
+	}
 }
 
 float Node::calculateQ(vec3 x){
-	return Q.calculate(x); 
+	return Q.calculate(x);
 }
 
 void Node::setIndices(vector<vec3> &m_vertices, Node& child, vec3 centerNewBox, float radius){

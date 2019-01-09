@@ -46,6 +46,7 @@ public:
 
     float calculate(vec3 x);
 
+
     bool isInitialized(){return initialized;}
 
     void create(vector<float> A, vector<float> B, float C);
