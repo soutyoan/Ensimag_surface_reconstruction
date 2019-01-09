@@ -127,11 +127,11 @@ void Node::createChilds(vector<vec3> &m_vertices){
 	for (int x = 0; x < 2; x++){
 		for (int y = 0; y < 2; y++){
 			for (int z = 0; z < 2; z++){
-				float _x = b.x + x/2 * b.lx;
-				float _y = b.y + y/2 * b.ly;
-				float _z = b.z + z/2 * b.lz;
-				Box b(_x, _y, _z, b.lx/2, b.ly/2, b.lz/2);
-				Node n(b);
+				float _x = b.x + x/2.0 * b.lx;
+				float _y = b.y + y/2.0 * b.ly;
+				float _z = b.z + z/2.0 * b.lz;
+				Box new_b(_x, _y, _z, b.lx/2, b.ly/2, b.lz/2);
+				Node n(new_b);
 				vec3 centerNewBox(_x + (1 + 2 * x) * b.lx/4, _y + (1 + 2 * y)
 					* b.ly/4, _z + (1 + 2 * z) * b.lz/4);
 				float radius = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
