@@ -123,7 +123,7 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 }
 
 void Node::createQ(){
-
+	
 }
 
 float Node::calculateQi(vec3 x){

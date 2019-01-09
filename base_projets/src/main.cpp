@@ -130,16 +130,16 @@ int main()
     // Data arrays Initialization
 
     // Mesh creation
-//    Mesh m("../models/triceratops.off");
+    Mesh m("../models/triceratops.off");
 
     BarthFunction bf;
     float x = 1.8;
-    Mesh m;
-    m.CreateSphere(m, 50, 50);
+    // Mesh m;
+    // m.CreateSphere(m, 50, 50);
     // m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
 
-//    m.Normalize();
-//    m.ComputeNormals();
+    m.Normalize();
+    m.ComputeNormals();
     m.ColorFromNormals();
 
     vec3 vx(0, 0, 0);
