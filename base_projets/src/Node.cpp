@@ -62,10 +62,30 @@ void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_norm
 	bool flag;
 	vec3 centerBox = vec3(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
 
+	// We need at least 6 points in the list of indices.
+	// We add them all in the p list
+	if (indices.size() < 6){
+		for (int p = 0; p < indices.size(); p++){
+			returnValues[p] = m_vertices[indices[p]];
+			returnNormals[p] = m_normals[indices[p]];
+		}
+		for (int p = indices.size(); p < 6; p++){
+			// By setting this, we can then check that
+			// the vector has been set with the command line :
+			// if (!returnValues[i]) {}
+			returnValues[p] = vec3(0.0);
+			returnNormals[p] = vec3(0.0);
+		}
+		return;
+	}
+
 	// We are looking for the 6 closest points
 	for (int p = 0; p < 6; p++){
 		minimumDistance = 1000000;
-		for (int i = 0; i < m_vertices.size(); i++){
+		// We only need to check in the current ball indices,
+		// these indices were saved during the cretae child function
+		for (vector<int>::iterator it = indices.begin(); it != indices.end(); ++it){
+			int i = *it; // Getting the ienteger from the iterator
 			flag = false;
 			for (int j = 0; j < p; j++){
 				if (i == return_indices[j]){
@@ -75,6 +95,8 @@ void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_norm
 			}
 
 			if (flag){
+				// If the current index is already in the list we
+				// don't put it in the list again.
 				continue;
 			}
 
@@ -122,8 +144,8 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 	}
 }
 
-void Node::createQ(){
-	
+void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
+
 }
 
 float Node::calculateQi(vec3 x){
@@ -176,7 +198,7 @@ float Node::calculateWiX(vec3 vx){
 }
 
 // On retourne SwQ et Sw dans le vec2
-vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices){
+vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> &m_normals){
 
 	cout << "HELLO\n" ;
 
@@ -185,7 +207,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices){
 		return SGlobal;
 	}
     if (Q.size() == 0){ // La fonction n'est pas encore créée
-        createQ();
+        createQ(m_vertices, m_normals);
     }
     // Le nouveau epsilon a été calculé
     if (epsi > eps0){
@@ -193,7 +215,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices){
             createChilds(m_vertices);
         }
         for (int i = 0; i < childs.size(); i++){ // iterere sur les enfants
-            vec2 S = childs.at(i).MPUapprox(x, eps0, m_vertices);
+            vec2 S = childs.at(i).MPUapprox(x, eps0, m_vertices, m_normals);
             SGlobal[0] += S[0];
             SGlobal[1] += S[1];
         }
