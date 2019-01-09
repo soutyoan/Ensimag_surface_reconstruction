@@ -54,13 +54,12 @@ Node::Node(Box b){
 
 // Return values should be a vector of size 6
 // TODO : Find a better and faster way to calculate this.
-void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_normals, vector<vec3> &returnValues, vector<vec3> &returnNormals){
+void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_normals, vec3 q, vector<vec3> &returnValues, vector<vec3> &returnNormals){
 
 	int minimumDistance = 1000000;
 
 	vector<int> return_indices(6);
 	bool flag;
-	vec3 centerBox = vec3(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
 
 	// We need at least 6 points in the list of indices.
 	// We add them all in the p list
@@ -70,11 +69,11 @@ void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_norm
 			returnNormals[p] = m_normals[indices[p]];
 		}
 		for (int p = indices.size(); p < 6; p++){
-			// By setting this, we can then check that
-			// the vector has been set with the command line :
-			// if (!returnValues[i]) {}
-			returnValues[p] = vec3(0.0);
-			returnNormals[p] = vec3(0.0);
+			// We set the same point to complete the vector
+			// This will have no impact on the program,
+			// we just want to avoid a non initialized value. 
+			returnValues[p] = m_vertices[indices[0]];
+			returnNormals[p] = m_normals[indices[0]];
 		}
 		return;
 	}
@@ -100,7 +99,7 @@ void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_norm
 				continue;
 			}
 
-			float n = norm(m_vertices[i], centerBox);
+			float n = norm(m_vertices[i], q);
 			if (n < minimumDistance){
 				minimumDistance = n;
 				return_indices[p] = i;
@@ -125,10 +124,9 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 	vector<vec3> p(6);
 	vector<vec3> n(6);
 
-	getClosestPointsInBall(m_vertices, m_normals, p, n);
-
 	for (int i = 0; i < 9; i++){
 		vec3 q = getQpoint(i);
+		getClosestPointsInBall(m_vertices, m_normals, q, p, n);
 		bool signPositive = dot(n[0], (q - p[0])) > 0;
 		bool addQ = true;
 		for (int j = 1; j < 6; j++){
@@ -148,7 +146,7 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 
 }
 
-float Node::calculateQi(vec3 x){
+float Node::calculateQ(vec3 x){
 	return 0;
 }
 
@@ -222,7 +220,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
     } else {
         isLeaf = true;
 		float wix = this->calculateWiX(x);
-        SGlobal[0] += wix * calculateQi(x);
+        SGlobal[0] += wix * calculateQ(x);
         SGlobal[1] += wix;
     }
     return SGlobal;
@@ -231,7 +229,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 void Node::initializeAsRoot(int sizeVertices){
 	indices.resize(sizeVertices);
 	for (int i = 0; i < sizeVertices; i++){
-		indices[i] = i; 
+		indices[i] = i;
 	}
 }
 
