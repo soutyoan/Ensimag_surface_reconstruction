@@ -604,15 +604,15 @@ float Mesh::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0){
 		if (mesh.m_positions[i][1] < minY){minY = mesh.m_positions[i][1];}
 		if (mesh.m_positions[i][2] < minZ){minZ = mesh.m_positions[i][2];}
 
-		if (mesh.m_positions[i][0] > maxX){minX = mesh.m_positions[i][0];}
-		if (mesh.m_positions[i][1] > maxY){minY = mesh.m_positions[i][1];}
-		if (mesh.m_positions[i][2] > maxZ){minZ = mesh.m_positions[i][2];}
+		if (mesh.m_positions[i][0] > maxX){maxX = mesh.m_positions[i][0];}
+		if (mesh.m_positions[i][1] > maxY){maxY = mesh.m_positions[i][1];}
+		if (mesh.m_positions[i][2] > maxZ){maxZ = mesh.m_positions[i][2];}
 	}
 
 	Box broot(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
 
 	root.b = broot;
-	root.initializeAsRoot(mesh.m_positions.size()); 
+	root.initializeAsRoot(mesh.m_positions.size());
 
 	vec2 SwqSw = root.MPUapprox(x, eps0, mesh.m_positions, mesh.m_normals);
 	return SwqSw[1]/SwqSw[0];
