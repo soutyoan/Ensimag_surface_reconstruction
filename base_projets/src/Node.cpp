@@ -4,44 +4,6 @@ float norm(vec3 x, vec3 y){
 	return pow(pow(x[0] - y[0], 2) + pow(x[1] - y[1], 2) + pow(x[2] - y[2], 2), 0.5);
 }
 
-// Function a <Local fit of a general quadric>
-// Paper page 4
-// float funcToOpt(const std::vector<float> &x, void* data){
-// 	/*
-// 	Parameters :
-// 	A in order
-// 		A11 A12 A13 A21 A22 A23 A31 A32 A33
-// 	B : 3 coefficients
-// 	C : scalar
-// 	*/
-// 	my_data *d = reinterpret_cast<my_data*>(data);
-// 	vector<float> A = d->A;
-// 	vector<float> b = d->b;
-// 	float c = d->c;
-//
-// 	return x[0] * (x[0] * A[0] + x[1] * A[1] + x[2] * A[2]) +
-// 		   x[1] * (x[0] * A[3] + x[1] * A[4] + x[2] * A[5]) +
-// 		   x[2] * (x[0] * A[6] + x[1] * A[7] + x[2] * A[8]) +
-// 		   b[0] * x[0] + b[1] * x[1] + b[2] * x[2] + c;
-// }
-//
-// // Action of optimizing the above <funcToOpt> function
-// // thanks to the library NLopt
-// void optimizeFunction(vec3 vx){
-// 	nlopt::opt = opt(nlopt::LN_COBYLA, 2);
-// 	opt.set_low_bounds(lb);
-// 	opt.set_min_objective(funcToOpt, NULL);
-// 	opt.set_xtol_rel(1e-4);
-//
-// 	vector<float> x(3);
-// 	for (int i = 0; i < 3; i++){
-// 		x[i] = vx[i];
-// 	}
-//
-// 	double minf;
-// 	nlopt::result = opt.optimize(x, minf);
-// }
-
 Node::Node(){
 	epsi = 0.1;
 }
@@ -71,7 +33,7 @@ void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_norm
 		for (int p = indices.size(); p < 6; p++){
 			// We set the same point to complete the vector
 			// This will have no impact on the program,
-			// we just want to avoid a non initialized value. 
+			// we just want to avoid a non initialized value.
 			returnValues[p] = m_vertices[indices[0]];
 			returnNormals[p] = m_normals[indices[0]];
 		}
@@ -204,7 +166,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 	if (norm(x, x) > R) {
 		return SGlobal;
 	}
-    if (Q.size() == 0){ // La fonction n'est pas encore créée
+    if (!Q.isInitialized()){ // La fonction n'est pas encore créée
         createQ(m_vertices, m_normals);
     }
     // Le nouveau epsilon a été calculé

@@ -11,6 +11,7 @@
 
 #include <ImplicitFunction.h>
 #include "Box.h"
+#include "LocalShapeFunction.h"
 
 // Optimisation library get from https://nlopt.readthedocs.io/en/latest/#documentation-and-mailing-lists
 // #include <nlopt.h>
@@ -18,22 +19,18 @@
 using namespace std;
 using namespace glm;
 
-typedef struct {
-    vector<float> A;
-    vector<float> b;
-    float c;
-} my_data;
-
 class Node{
 
 private:
     float epsi; // Epsilon i
-    vector<float> Q; // La fonction d'approximation Q
     vector<Node> childs; // Childs of this node
     bool isLeaf;
     vector<int> indices;
 
 public:
+
+    LocalShapeFunction Q;
+
     // The box including all the points
     // This box is created by a subdivision
     Box b;
