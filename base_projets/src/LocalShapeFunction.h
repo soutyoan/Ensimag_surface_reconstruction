@@ -8,11 +8,15 @@
 #include <iostream>
 #include <math.h>
 #include <omp.h>
+#include <stdexcept>
 
 using namespace std;
 using namespace glm;
 
 class LocalShapeFunction {
+
+private:
+    bool initialized;
 
 public:
 
@@ -39,8 +43,12 @@ public:
 
     LocalShapeFunction();
     LocalShapeFunction(vector<float> A, vector<float> B, float C);
-    vec3 calculate(vec3 x);
-    bool isInitialized(); 
+
+    float calculate(vec3 x);
+
+    bool isInitialized(){return initialized;}
+
+    void create(vector<float> A, vector<float> B, float C);
 };
 
 #endif

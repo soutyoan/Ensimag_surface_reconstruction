@@ -109,7 +109,7 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 }
 
 float Node::calculateQ(vec3 x){
-	return 0;
+	return Q.calculate(x); 
 }
 
 void Node::setIndices(vector<vec3> &m_vertices, Node& child, vec3 centerNewBox, float radius){
