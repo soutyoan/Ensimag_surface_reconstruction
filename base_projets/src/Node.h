@@ -28,7 +28,6 @@ class Node{
 
 public:
     float epsi; // Epsilon i
-    bool isRoot; 
     vector<float> Q; // La fonction d'approximation Q
     vector<Node> childs; // Childs of this node
     bool isLeaf;
@@ -49,6 +48,7 @@ public:
     void getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_normals, vector<vec3> &returnValues, vector<vec3> &returnNormals);
     vec3 getQpoint(int i);
     vec3 getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals, vector<vec3> &qVec);
+    void initializeAsRoot(int sizeVertices); 
     ~Node();
 };
 

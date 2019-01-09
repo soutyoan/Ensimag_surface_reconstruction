@@ -228,6 +228,13 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
     return SGlobal;
 }
 
+void Node::initializeAsRoot(int sizeVertices){
+	indices.resize(sizeVertices);
+	for (int i = 0; i < sizeVertices; i++){
+		indices[i] = i; 
+	}
+}
+
 Node::~Node(){
 
 }
