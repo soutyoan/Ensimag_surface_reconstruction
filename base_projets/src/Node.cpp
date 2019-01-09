@@ -104,38 +104,78 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 	}
 }
 
-vector<float> compute_gradient(vector<vec3> &qvector, vector<vec3> &pvector, LocalShapeFunction &Q, vector<float> &Ws, float W) {
-	vector<float> res(0, 13);
+vector<float> Node::compute_gradient(vector<vec3> &qvector, vector<vec3> &pvector) {
+	vector<float> Ws;
+	vector<float> res(13);
 	vector<vec3>::iterator pIt;
 	vector<vec3>::iterator qIt;
 	vector<float>::iterator wIt;
-	int m = qvector.size();
-	for (int i=0; i<13; i++) {
-		// TODO : compute gradient vector
-	}
-}
 
-float norm(vector<float> x) {
-	// TODO : computation of norm of vector
+	float W;
+	for (pIt=pvector.begin(); pIt!=pvector.end(); pIt++) {
+		float _tmp = Node::calculateWiX(pIt);
+		Ws.push_back(_tmp);
+		W += _tmp;
+	}
+	int m = qvector.size();
+
+	for (int i=0; i<13; i++) {
+
+		float val1, val2;
+		wIt = Ws.begin();
+
+		for (pIt=pvector.begin(); pIt!=pvector.end(); pIt++) {
+			float _tmp = (wIt * this->Q.calculate(pIt)) << 1;
+			wIt++;
+			// 9 components for matrix A
+			if (i<9) {
+				_tmp *= pIt[int(i/3)] * pIt[int(i%3)];
+			} else if (i<12) { // 3 components for vector B
+				_tmp *= pIt[i-9];
+			}
+			val1 += _tmp; // last one for value C
+		}
+
+		for (qIt=qvector.begin(); qIt!=qvector.end(); qIt++) {
+			float _tmp = this->Q.calculate(qIt) << 1;
+			// 9 components for matrix A
+			if (i<9) {
+				_tmp *= qIt[int(i/3)] * qIt[int(i%3)];
+			} else if (i<12) { // 3 components for vector B
+				_tmp *= qIt[i-9];
+			}
+			val2 += _tmp; // last one for value C
+		}
+
+		res[i] = val1 / W + val2 / m;
+	}
+	return res;
 }
 
 void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 	// TODO : init those vectors
-	vector<vec3> qvector;
-	vector<vec3> pvector;
-	vector<float> Ws;
-	float W;
+	vector<vec3> qVector;
+	vector<vec3> pVector;
+	vector<vec3> pNormalVector;
+
 	// gradient descent algorithm to find best Q function
-	vector<float> _a0(1, 9);
-	vector<float> _b0(1, 3);
-	Q.create(_a0, _b0, 1.0f);
-	vector<float> Xk(1, 13);
-	vector<float> gradXk = compute_gradient(qvector, pvector, this->Q, Ws, W);
-	while (norm(gradXk) > EPS) {
+	vector<float> _a(1.0f, 9);
+	vector<float> _b(1.0f, 3);
+	Q.create(_a, _b, 1.0f);
+	vector<float> Xk(1.0f, 13);
+	vector<float> gradXk = compute_gradient(qVector, pVector);
+	while (norm(gradXk, vec3(0)) > EPS) {
 		// TODO : directions descent algo
 		// direction computation Dk
+		vector<float> Dk(13);
 		// linear research Ak
+		float Ak;
 		// Updating Xk, gradXk and Q
+		Xk += Ak * Dk;
+		for (int i=0; i<9; i++) _a[i] = Xk[i];
+		for (int i=9; i<12; i++) _b[i-9] = Xk[i];
+		Q.create(_a, _b, Xk[12]);
+		gradXk = compute_gradient(qVector, pVector);
 	}
 }
 
