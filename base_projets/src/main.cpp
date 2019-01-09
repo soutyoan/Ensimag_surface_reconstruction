@@ -20,6 +20,7 @@
 #include "MeshHE.h"
 #include "Object.h"
 
+#include <sys/stat.h>
 
 // Window size :
 #define WIDTH 1000.0f
@@ -43,6 +44,7 @@ float view_angle = 45.0f;
 mat4 view_matrix = lookAt(vec3(1.0, 0.5, 1.0), vec3(0.0), vec3(0.0, 1.0, 0.0));
 mat4 projection_matrix = perspective(view_angle, WIDTH / HEIGHT, 0.1f, 1000.0f);
 
+const bool OUTPUT = true;
 
 void view_control(mat4& view_matrix, float dx);
 
@@ -144,6 +146,12 @@ int main()
 
     vec3 vx(0, 0, 0);
     m.evaluateMPUapprox(m, vx, 0.01);
+
+    if (OUTPUT){
+        // Output to folder
+        mkdir("../output", 0777);
+        m.write_obj("../output/output.obj");
+    }
 
     // Half edge conversion
     MeshHE m_he(m);

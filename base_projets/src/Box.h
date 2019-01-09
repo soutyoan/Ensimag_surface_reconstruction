@@ -21,4 +21,6 @@ public:
 
 };
 
+std::ostream& operator<<(std::ostream &strm, const Box &b); 
+
 #endif
