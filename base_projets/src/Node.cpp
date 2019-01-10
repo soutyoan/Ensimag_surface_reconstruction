@@ -121,9 +121,10 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 	}
 }
 
-vector<float> Node::compute_gradient(vector<vec3> &qvector, vector<vec3> &pvector, vector <float> &dVec) {
+void Node::compute_gradient(vector<vec3> &qvector, vector<vec3> &pvector,
+	vector <float> &dVec, vector<float>& res) {
+
 	vector<float> Ws;
-	vector<float> res(13);
 	vector<vec3>::iterator pIt;
 	vector<vec3>::iterator qIt;
 	vector<float>::iterator wIt;
@@ -131,7 +132,7 @@ vector<float> Node::compute_gradient(vector<vec3> &qvector, vector<vec3> &pvecto
 
 	float W;
 	for (pIt=pvector.begin(); pIt!=pvector.end(); pIt++) {
-		float _tmp = Node::calculateWiX(pIt);
+		float _tmp = calculateWiX(*pIt);
 		Ws.push_back(_tmp);
 		W += _tmp;
 	}
@@ -143,31 +144,30 @@ vector<float> Node::compute_gradient(vector<vec3> &qvector, vector<vec3> &pvecto
 		wIt = Ws.begin();
 
 		for (pIt=pvector.begin(); pIt!=pvector.end(); pIt++) {
-			float _tmp = (wIt * this->Q.calculate(pIt)) << 1;
+			float _tmp = (*wIt * this->Q.calculate(*pIt)) * 2;
 			wIt++;
 			// 9 components for matrix A
 			if (i<9) {
-				_tmp *= pIt[int(i/3)] * pIt[int(i%3)];
+				_tmp *= (*pIt)[int(i/3)] * (*pIt)[int(i%3)];
 			} else if (i<12) { // 3 components for vector B
-				_tmp *= pIt[i-9];
+				_tmp *= (*pIt)[i-9];
 			}
 			val1 += _tmp; // last one for value C
 		}
 
 		for (qIt=qvector.begin(), dIt=dVec.begin(); qIt!=qvector.end() && dIt!=dVec.end(); qIt++, dIt++) {
-			float _tmp = (this->Q.calculate(qIt) - dIt) << 1;
+			float _tmp = (this->Q.calculate(*qIt) - *dIt) * 2;
 			// 9 components for matrix A
 			if (i<9) {
-				_tmp *= qIt[int(i/3)] * qIt[int(i%3)];
+				_tmp *= (*qIt)[int(i/3)] * (*qIt)[int(i%3)];
 			} else if (i<12) { // 3 components for vector B
-				_tmp *= qIt[i-9];
+				_tmp *= (*qIt)[i-9];
 			}
 			val2 += _tmp; // last one for value C
 		}
 
 		res[i] = val1 / W + val2 / m;
 	}
-	return res;
 }
 
 void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
@@ -181,7 +181,8 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 	vector<float> _b(1.0f, 3);
 	Q.create(_a, _b, 1.0f);
 	vector<float> Xk(1.0f, 13);
-	vector<float> gradXk = compute_gradient(qVector, pVector);
+	vector<float> gradXk(13);
+	compute_gradient(qVector, pVector, gradXk);
 	while (norm(gradXk, vec3(0)) > EPS) {
 		// TODO : directions descent algo
 		// direction computation Dk
@@ -195,7 +196,7 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 		for (int i=0; i<9; i++) _a[i] = Xk[i];
 		for (int i=9; i<12; i++) _b[i-9] = Xk[i];
 		Q.create(_a, _b, Xk[12]);
-		gradXk = compute_gradient(qVector, pVector);
+		compute_gradient(qVector, pVector, gradXk);
 	}
 }
 

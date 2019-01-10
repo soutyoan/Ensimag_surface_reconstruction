@@ -94,7 +94,15 @@ public:
     Calculate the remaining Q points, used for the creation of the Q function.
     See the declaration of the Q function on the page 4 (a) of the paper
     */
-    vec3 getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals, vector<vec3> &qVec);
+    vec3 getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals,
+        vector<vec3> &qVec, vector <vec3> &pVec, vector <float> &dVec);
+
+    /*
+    Compute the gradients and returns the result in the res parameter.
+    This res parameter should be initialize as a vector<float>(13)
+    */
+    void compute_gradient(vector<vec3> &qvector, vector<vec3> &pvector,
+         vector <float> &dVec, vector<float>& res);
 
     /*
     We initialize the indices vector for the root,
