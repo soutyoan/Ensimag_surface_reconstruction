@@ -82,7 +82,17 @@ vec3 Node::getQpoint(int i){
 					b.z + (i%2) * b.lz); // 0 1 0 1 0 1 0 1
 }
 
-vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals, vector<vec3> &qVec){
+/**
+ * Gets the remaining points in order to compute the local shape function Q in
+ * general form (a).
+ * @param  m_vertices input points vertex
+ * @param  m_normals  input normal vertex
+ * @param  qVec       remaining auxiliar points q
+ * @param  pVec       set of p points associated to each q point
+ * @param dVec	      set of d values
+ * @return            updating qvec and pVec sets
+ */
+vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals, vector<vec3> &qVec, vector <vec3> &pVec, vector <float> &dVec){
 	vector<vec3> p(6);
 	vector<vec3> n(6);
 
@@ -91,7 +101,7 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 		getClosestPointsInBall(m_vertices, m_normals, q, p, n);
 		bool signPositive = dot(n[0], (q - p[0])) > 0;
 		bool addQ = true;
-		for (int j = 1; j < 6; j++){
+		for (int j = 0; j < 6; j++){
 			bool currentSign = dot(n[j], (q - p[j])) > 0;
 			if (currentSign != signPositive){
 				addQ = false;
@@ -100,16 +110,24 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 		}
 		if (addQ){
 			qVec.push_back(q);
+			float d;
+			for (int _ind=0; _ind<6; _ind++) {
+				pVec.push_back(vec3(&p[_ind]));
+				d += dot(n[i], q-p[i]);
+			}
+			d /= 6;
+			dVec.push_back(d);
 		}
 	}
 }
 
-vector<float> Node::compute_gradient(vector<vec3> &qvector, vector<vec3> &pvector) {
+vector<float> Node::compute_gradient(vector<vec3> &qvector, vector<vec3> &pvector, vector <float> &dVec) {
 	vector<float> Ws;
 	vector<float> res(13);
 	vector<vec3>::iterator pIt;
 	vector<vec3>::iterator qIt;
 	vector<float>::iterator wIt;
+	vector<float>::iterator dIt;
 
 	float W;
 	for (pIt=pvector.begin(); pIt!=pvector.end(); pIt++) {
@@ -136,8 +154,8 @@ vector<float> Node::compute_gradient(vector<vec3> &qvector, vector<vec3> &pvecto
 			val1 += _tmp; // last one for value C
 		}
 
-		for (qIt=qvector.begin(); qIt!=qvector.end(); qIt++) {
-			float _tmp = this->Q.calculate(qIt) << 1;
+		for (qIt=qvector.begin(), dIt=dVec.begin(); qIt!=qvector.end() && dIt!=dVec.end(); qIt++, dIt++) {
+			float _tmp = (this->Q.calculate(qIt) - dIt) << 1;
 			// 9 components for matrix A
 			if (i<9) {
 				_tmp *= qIt[int(i/3)] * qIt[int(i%3)];
@@ -168,10 +186,12 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 		// TODO : directions descent algo
 		// direction computation Dk
 		vector<float> Dk(13);
-		// linear research Ak
+		// TODO : linear research Ak
 		float Ak;
 		// Updating Xk, gradXk and Q
-		Xk += Ak * Dk;
+		for (size_t i = 0; i < 13; i++) {
+			Xk[i] += Ak + Dk[i];
+		}
 		for (int i=0; i<9; i++) _a[i] = Xk[i];
 		for (int i=9; i<12; i++) _b[i-9] = Xk[i];
 		Q.create(_a, _b, Xk[12]);
