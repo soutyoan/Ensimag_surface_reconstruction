@@ -39,9 +39,6 @@ SET(CMAKE_C_TARGET_INCLUDE_PATH
   "../external/glfw-2.7.6/include"
   "../external/glm-0.9.4.0"
   "../external/glew-1.9.0/include"
-  "../external/Eigen"
-  "../external/Eigen/src"
-  "../external/LBFGS"
   )
 SET(CMAKE_CXX_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})
 SET(CMAKE_Fortran_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})
