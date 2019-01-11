@@ -10,9 +10,8 @@
  * @param _dVec [description]
  * @param _wVec [description]
  */
-LossFunction::LossFunction(const LocalShapeFunction& _Q, const vector<vec3>& _qVec,
-    const vector<vec3>& _pVec, const vector<float>& _dVec, const vector<float>& _wVec) {
-    this->Q = LocalShapeFunction(Q);
+LossFunction::LossFunction(LocalShapeFunction& _Q, const vector<vec3>& _qVec, const vector<vec3>& _pVec, const vector<float>& _dVec, const vector<float>& _wVec) {
+    this->Q = LocalShapeFunction(_Q);
     this->pVec = vector<vec3>(_pVec);
     this->qVec = vector<vec3>(_qVec);
     this->dVec = vector<float>(_dVec);
@@ -20,7 +19,7 @@ LossFunction::LossFunction(const LocalShapeFunction& _Q, const vector<vec3>& _qV
 }
 
 
-float LossFunction::operator()(const vector<float>& X, vector<float>& gradfX) {
+float LossFunction::operator()(const VectorXf& X, VectorXf& gradfX) {
     vector<vec3>::iterator q;
     vector<vec3>::iterator p;
     vector<float>::iterator d;
@@ -69,14 +68,14 @@ float LossFunction::operator()(const vector<float>& X, vector<float>& gradfX) {
     return res;
 }
 
-vector<float> LossFunction::optimizeQ() {
+VectorXf LossFunction::optimizeQ() {
     LBFGSParam<float> param;
     param.epsilon = eps;
     param.max_iterations = ITE_MAX;
 
     LBFGSSolver<float> solver(param);
 
-    vector<float> X(13);
+    VectorXf X(13);
     float _val;
     int niter = solver.minimize(*this, X, _val);
 

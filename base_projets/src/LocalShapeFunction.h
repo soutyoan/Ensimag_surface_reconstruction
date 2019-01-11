@@ -10,9 +10,11 @@
 #include <omp.h>
 #include <stdexcept>
 #include "Box.h"
+#include <Eigen/Core>
 
 using namespace std;
 using namespace glm;
+using Eigen::VectorXf;
 
 const int SAMPLE_RATE = 5;
 
@@ -47,8 +49,8 @@ public:
 
     LocalShapeFunction();
     LocalShapeFunction(vector<float>& A, vector<float>& B, float C);
-    LocalShapeFunction(vector<float>& X);
-    LocalShapeFunction(const LocalShapeFunction& _aux);
+    LocalShapeFunction(VectorXf& X);
+    LocalShapeFunction(LocalShapeFunction& _aux);
 
     float calculate(vec3 x);
 
@@ -63,7 +65,7 @@ public:
     /*
     Updating the function
      */
-    void updateQ(vector<float> X);
+    void updateQ(VectorXf& X);
 
     /*
     Find the zeros of the function.

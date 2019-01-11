@@ -4,10 +4,13 @@
 
 #include "LocalShapeFunction.h"
 #include <LBFGS.h>
+#include <Eigen/Core>
 
 using namespace std;
 using namespace glm;
 using namespace LBFGSpp;
+using Eigen::VectorXf;
+
 
 class LossFunction {
 
@@ -20,11 +23,11 @@ public:
     int ITE_MAX = 50; // number of maximal iterations
     float eps=1.0e-4; // precision
     LossFunction(){}
-    LossFunction(const LocalShapeFunction& Q, const vector<vec3>& _qVec, const vector<vec3>& _pVec, const vector<float>& _dVec, const vector<float>& _wVec);
+    LossFunction(LocalShapeFunction& Q, const vector<vec3>& _qVec, const vector<vec3>& _pVec, const vector<float>& _dVec, const vector<float>& _wVec);
 
-    float operator()(const vector<float>& X, vector<float>& gradfX);
+    float operator()(const VectorXf& X, VectorXf& gradfX);
 
-    vector<float> optimizeQ();
+    VectorXf optimizeQ();
 
 };
 

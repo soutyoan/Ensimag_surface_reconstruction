@@ -28,6 +28,13 @@ Node::Node(Box b){
 	this->b = b;
 }
 
+Node::Node(const Node& n){
+	this->epsi = n.epsi;
+	this->isLeaf = n.isLeaf;
+	this->childs = vector<Node>(n.childs);
+	this->indices = vector<int>(n.indices);
+}
+
 // Return values should be a vector of size 6
 // TODO : Find a better and faster way to calculate this.
 void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_normals, vec3 q, vector<vec3> &returnValues, vector<vec3> &returnNormals){
@@ -146,9 +153,9 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 	for (int i=0; i<pVec.size(); i++) {
 		wVec.push_back(calculateWiX(pVec[i]));
 	}
-	LossFunction F = LossFunction(Q, qVec, pVec, dVec, wVec);
+	LossFunction F(this->Q, qVec, pVec, dVec, wVec);
 
-	vector<float> X = F.optimizeQ();
+	VectorXf X = F.optimizeQ();
 
 	Q.updateQ(X);
 

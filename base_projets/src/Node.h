@@ -14,10 +14,13 @@
 #include "LocalShapeFunction.h"
 #include "LossFunction.h"
 
+#include <Eigen/Core>
+
 // Optimisation library get from https://nlopt.readthedocs.io/en/latest/#documentation-and-mailing-lists
 
 using namespace std;
 using namespace glm;
+using Eigen::VectorXf;
 
 class Node{
 
@@ -40,6 +43,7 @@ public:
     */
     Node();
     Node(Box b);
+    Node(const Node& n);
 
     /*
     Function from the MPU_omplicit paper, page 3
