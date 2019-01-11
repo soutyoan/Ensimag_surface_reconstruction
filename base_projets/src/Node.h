@@ -12,9 +12,9 @@
 #include <ImplicitFunction.h>
 #include "Box.h"
 #include "LocalShapeFunction.h"
+#include "LossFunction.h"
 
 // Optimisation library get from https://nlopt.readthedocs.io/en/latest/#documentation-and-mailing-lists
-// #include <nlopt.h>
 
 using namespace std;
 using namespace glm;

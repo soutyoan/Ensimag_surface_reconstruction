@@ -4,6 +4,20 @@ float norm(vec3 x, vec3 y){
 	return pow(pow(x[0] - y[0], 2) + pow(x[1] - y[1], 2) + pow(x[2] - y[2], 2), 0.5);
 }
 
+/**
+ * Computation of L2 norm for float vector (used in optimization algorithm)
+ * @param  vec vector of float values
+ * @return     ||vec|| (l2-norm)
+ */
+float normVec(vector<float> vec) {
+	vector<float>::iterator val;
+	float res;
+	for (val=vec.begin(); val!=vec.end(); val++) {
+		res += pow(*val, 2);
+	}
+	return sqrt(res);
+}
+
 Node::Node(){
 	epsi = 0.1;
 }
@@ -112,7 +126,7 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 			qVec.push_back(q);
 			float d;
 			for (int _ind=0; _ind<6; _ind++) {
-				pVec.push_back(vec3(&p[_ind]));
+				pVec.push_back(vec3(p[_ind]));
 				d += dot(n[i], q-p[i]);
 			}
 			d /= 6;
@@ -121,83 +135,23 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 	}
 }
 
-void Node::compute_gradient(vector<vec3> &qvector, vector<vec3> &pvector,
-	vector <float> &dVec, vector<float>& res) {
 
-	vector<float> Ws;
-	vector<vec3>::iterator pIt;
-	vector<vec3>::iterator qIt;
-	vector<float>::iterator wIt;
-	vector<float>::iterator dIt;
-
-	float W;
-	for (pIt=pvector.begin(); pIt!=pvector.end(); pIt++) {
-		float _tmp = calculateWiX(*pIt);
-		Ws.push_back(_tmp);
-		W += _tmp;
-	}
-	int m = qvector.size();
-
-	for (int i=0; i<13; i++) {
-
-		float val1, val2;
-		wIt = Ws.begin();
-
-		for (pIt=pvector.begin(); pIt!=pvector.end(); pIt++) {
-			float _tmp = (*wIt * this->Q.calculate(*pIt)) * 2;
-			wIt++;
-			// 9 components for matrix A
-			if (i<9) {
-				_tmp *= (*pIt)[int(i/3)] * (*pIt)[int(i%3)];
-			} else if (i<12) { // 3 components for vector B
-				_tmp *= (*pIt)[i-9];
-			}
-			val1 += _tmp; // last one for value C
-		}
-
-		for (qIt=qvector.begin(), dIt=dVec.begin(); qIt!=qvector.end() && dIt!=dVec.end(); qIt++, dIt++) {
-			float _tmp = (this->Q.calculate(*qIt) - *dIt) * 2;
-			// 9 components for matrix A
-			if (i<9) {
-				_tmp *= (*qIt)[int(i/3)] * (*qIt)[int(i%3)];
-			} else if (i<12) { // 3 components for vector B
-				_tmp *= (*qIt)[i-9];
-			}
-			val2 += _tmp; // last one for value C
-		}
-
-		res[i] = val1 / W + val2 / m;
-	}
-}
 
 void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
-	// TODO : init those vectors
-	vector<vec3> qVector;
-	vector<vec3> pVector;
-	vector<vec3> pNormalVector;
-
-	// gradient descent algorithm to find best Q function
-	vector<float> _a(1.0f, 9);
-	vector<float> _b(1.0f, 3);
-	Q.create(_a, _b, 1.0f);
-	vector<float> Xk(1.0f, 13);
-	vector<float> gradXk(13);
-	compute_gradient(qVector, pVector, gradXk);
-	while (norm(gradXk, vec3(0)) > EPS) {
-		// TODO : directions descent algo
-		// direction computation Dk
-		vector<float> Dk(13);
-		// TODO : linear research Ak
-		float Ak;
-		// Updating Xk, gradXk and Q
-		for (size_t i = 0; i < 13; i++) {
-			Xk[i] += Ak + Dk[i];
-		}
-		for (int i=0; i<9; i++) _a[i] = Xk[i];
-		for (int i=9; i<12; i++) _b[i-9] = Xk[i];
-		Q.create(_a, _b, Xk[12]);
-		compute_gradient(qVector, pVector, gradXk);
+	vector<vec3> qVec;
+	vector<vec3> pVec;
+	vector<float> dVec;
+	getRemainingQpoints(m_vertices, m_normals, qVec, pVec, dVec);
+	vector<float> wVec;
+	for (int i=0; i<pVec.size(); i++) {
+		wVec.push_back(calculateWiX(pVec[i]));
 	}
+	LossFunction F = LossFunction(Q, qVec, pVec, dVec, wVec);
+
+	vector<float> X = F.optimizeQ();
+
+	Q.updateQ(X);
+
 }
 
 float Node::calculateQ(vec3 x){

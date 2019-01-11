@@ -46,7 +46,9 @@ public:
     float C;
 
     LocalShapeFunction();
-    LocalShapeFunction(vector<float> A, vector<float> B, float C);
+    LocalShapeFunction(vector<float>& A, vector<float>& B, float C);
+    LocalShapeFunction(vector<float>& X);
+    LocalShapeFunction(const LocalShapeFunction& _aux);
 
     float calculate(vec3 x);
 
@@ -57,6 +59,11 @@ public:
     Initialize the function
     */
     void create(vector<float> A, vector<float> B, float C);
+
+    /*
+    Updating the function
+     */
+    void updateQ(vector<float> X);
 
     /*
     Find the zeros of the function.

@@ -4,9 +4,20 @@ LocalShapeFunction::LocalShapeFunction() {
     initialized = false;
 }
 
-LocalShapeFunction::LocalShapeFunction(vector<float> A, vector<float> B, float C){
+LocalShapeFunction::LocalShapeFunction(const LocalShapeFunction& _aux) {
+    this->initialized = _aux.isInitialized();
+    this->A = vector<vec3>(_aux.A);
+    this->B = vector<vec3>(_aux.B);
+    this->C = _aux.C;
+}
+
+LocalShapeFunction::LocalShapeFunction(vector<float>& A, vector<float>& B, float C){
     create(A, B, C);
     initialized = false;
+}
+
+LocalShapeFunction::LocalShapeFunction(vector <float>& X) {
+    update(X);
 }
 
 void LocalShapeFunction::create(vector<float> A, vector<float> B, float C){
@@ -14,6 +25,18 @@ void LocalShapeFunction::create(vector<float> A, vector<float> B, float C){
     this->B = B;
     this->C = C;
     initialized = true;
+}
+
+void LocalShapeFunction::update(vector<float>& X) {
+    for (int i=0; i<X.size(); i++) {
+        if (i<9) {
+            A[i] = X[i];
+        } else if (i<12) {
+            B[i] = X[i];
+        } else {
+            C = X[i];
+        }
+    }
 }
 
 // TODO : Implement
