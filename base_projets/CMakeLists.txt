@@ -57,5 +57,5 @@ file(
     src/*.h
 )
 
-add_executable(projet  ${shader_file} ${source_files} ${eigen_files})
-target_link_libraries(projet ${ALL_LIBS} Eigen)
+add_executable(projet  ${shader_file} ${source_files})
+target_link_libraries(projet ${ALL_LIBS})
