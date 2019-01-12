@@ -11,59 +11,59 @@ add_definitions(
 ### GLFW ###
 
 
-set(GLFW_SOURCE	
-	glfw-2.7.6/lib/enable.c 
-	glfw-2.7.6/lib/fullscreen.c 
-	glfw-2.7.6/lib/glext.c 
-	glfw-2.7.6/lib/image.c 
-	glfw-2.7.6/lib/init.c 
-	glfw-2.7.6/lib/input.c 
-	glfw-2.7.6/lib/joystick.c 
-	glfw-2.7.6/lib/stream.c 
-	glfw-2.7.6/lib/tga.c 
-	glfw-2.7.6/lib/thread.c 
-	glfw-2.7.6/lib/time.c 
+set(GLFW_SOURCE
+	glfw-2.7.6/lib/enable.c
+	glfw-2.7.6/lib/fullscreen.c
+	glfw-2.7.6/lib/glext.c
+	glfw-2.7.6/lib/image.c
+	glfw-2.7.6/lib/init.c
+	glfw-2.7.6/lib/input.c
+	glfw-2.7.6/lib/joystick.c
+	glfw-2.7.6/lib/stream.c
+	glfw-2.7.6/lib/tga.c
+	glfw-2.7.6/lib/thread.c
+	glfw-2.7.6/lib/time.c
 	glfw-2.7.6/lib/window.c
 )
 
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 set(GLFW_SOURCE	${GLFW_SOURCE}
-	glfw-2.7.6/lib/win32/win32_enable.c 
-	glfw-2.7.6/lib/win32/win32_fullscreen.c 
-	glfw-2.7.6/lib/win32/win32_glext.c 
-	glfw-2.7.6/lib/win32/win32_init.c 
-	glfw-2.7.6/lib/win32/win32_joystick.c 
-	glfw-2.7.6/lib/win32/win32_thread.c 
-	glfw-2.7.6/lib/win32/win32_time.c 
-	glfw-2.7.6/lib/win32/win32_window.c 
+	glfw-2.7.6/lib/win32/win32_enable.c
+	glfw-2.7.6/lib/win32/win32_fullscreen.c
+	glfw-2.7.6/lib/win32/win32_glext.c
+	glfw-2.7.6/lib/win32/win32_init.c
+	glfw-2.7.6/lib/win32/win32_joystick.c
+	glfw-2.7.6/lib/win32/win32_thread.c
+	glfw-2.7.6/lib/win32/win32_time.c
+	glfw-2.7.6/lib/win32/win32_window.c
 )
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 set(GLFW_SOURCE	${GLFW_SOURCE}
-	glfw-2.7.6/lib/x11/x11_enable.c 
-	glfw-2.7.6/lib/x11/x11_fullscreen.c 
-	glfw-2.7.6/lib/x11/x11_glext.c 
-	glfw-2.7.6/lib/x11/x11_init.c 
-	glfw-2.7.6/lib/x11/x11_joystick.c 
-	glfw-2.7.6/lib/x11/x11_keysym2unicode.c 
-	glfw-2.7.6/lib/x11/x11_thread.c 
-	glfw-2.7.6/lib/x11/x11_time.c 
+	glfw-2.7.6/lib/x11/x11_enable.c
+	glfw-2.7.6/lib/x11/x11_fullscreen.c
+	glfw-2.7.6/lib/x11/x11_glext.c
+	glfw-2.7.6/lib/x11/x11_init.c
+	glfw-2.7.6/lib/x11/x11_joystick.c
+	glfw-2.7.6/lib/x11/x11_keysym2unicode.c
+	glfw-2.7.6/lib/x11/x11_thread.c
+	glfw-2.7.6/lib/x11/x11_time.c
 	glfw-2.7.6/lib/x11/x11_window.c
 )
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 set(GLFW_OBJC_SOURCE
-	glfw-2.7.6/lib/cocoa/cocoa_enable.m 
-	glfw-2.7.6/lib/cocoa/cocoa_fullscreen.m 
-	glfw-2.7.6/lib/cocoa/cocoa_glext.m 
-	glfw-2.7.6/lib/cocoa/cocoa_init.m 
-	glfw-2.7.6/lib/cocoa/cocoa_joystick.m 
-	glfw-2.7.6/lib/cocoa/cocoa_thread.c 
-	glfw-2.7.6/lib/cocoa/cocoa_time.m 
-	glfw-2.7.6/lib/cocoa/cocoa_window.m 
+	glfw-2.7.6/lib/cocoa/cocoa_enable.m
+	glfw-2.7.6/lib/cocoa/cocoa_fullscreen.m
+	glfw-2.7.6/lib/cocoa/cocoa_glext.m
+	glfw-2.7.6/lib/cocoa/cocoa_init.m
+	glfw-2.7.6/lib/cocoa/cocoa_joystick.m
+	glfw-2.7.6/lib/cocoa/cocoa_thread.c
+	glfw-2.7.6/lib/cocoa/cocoa_time.m
+	glfw-2.7.6/lib/cocoa/cocoa_window.m
 )
 set(GLFW_SOURCE	${GLFW_SOURCE} ${GLFW_OBJC_SOURCE})
 
-set_source_files_properties(${GLFW_SOURCE} 
+set_source_files_properties(${GLFW_SOURCE}
 	PROPERTIES COMPILE_FLAGS "-x objective-c") #-fobjc-exceptions
 
 

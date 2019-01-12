@@ -26,9 +26,8 @@ include_directories(
         external/glew-1.9.0/include/
 )
 
-
 set(ALL_LIBS
-	GLFW_276
+	  GLFW_276
     GLEW_190
 )
 
@@ -42,6 +41,8 @@ add_definitions(
 )
 
 
+## EIGEN ###
+include_directories(external) # Include Eigen as <Eigen/file>
 
 file(
     GLOB
@@ -52,11 +53,9 @@ file(
 file(
     GLOB
     source_files
-    external/Eigen/*.cpp
-    external/Eigen/*.h
     src/*.cpp
     src/*.h
 )
 
-add_executable(projet  ${shader_file} ${source_files} )
-target_link_libraries(projet ${ALL_LIBS})
+add_executable(projet  ${shader_file} ${source_files} ${eigen_files})
+target_link_libraries(projet ${ALL_LIBS} Eigen)
