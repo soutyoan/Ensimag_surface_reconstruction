@@ -54,7 +54,7 @@ public:
     LocalShapeFunction(LocalShapeFunction& _aux);
     ~LocalShapeFunction();
 
-    virtual float Eval(vec3 x);
+    virtual float Eval(vec3 x) const;
 
     float calculate(vec3 x);
 
@@ -63,7 +63,7 @@ public:
     /*
     Gradient evaluation
      */
-    virtual vec3 EvalDev(vec3 x);
+    virtual vec3 EvalDev(vec3 x) const;
 
 
     bool isInitialized(){return initialized;}

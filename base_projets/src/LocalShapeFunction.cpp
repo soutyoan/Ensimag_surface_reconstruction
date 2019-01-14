@@ -48,16 +48,23 @@ void LocalShapeFunction::updateQ(const VectorXf& X) {
     }
 }
 
-float LocalShapeFunction::Eval(vec3 x) {
-    return calculate(x);
+float LocalShapeFunction::Eval(vec3 x) const {
+    return x[0] * (A[0] * x[0] + A[1] * x[1] + A[2] * x[2]) +
+        x[1] * (A[3] * x[0] + A[4] * x[1] + A[5] * x[2]) +
+        x[2] * (A[6] * x[0] + A[7] * x[1] + A[8] * x[2]) +
+        x[0] * B[0] + x[1] * B[1] + x[2] * B[2] + C;
 }
 
-vec3 LocalShapeFunction::EvalDev(vec3 x) {
-    return evalGradient(x);
+vec3 LocalShapeFunction::EvalDev(vec3 x) const {
+    vec3 res(0);
+    res[0] = dot(vec3(2*A[0], A[1]+A[3], A[2]+A[6]), x)+B[0];
+    res[1] = dot(vec3(A[1]+A[3], 2*A[4], A[5]+A[7]), x)+B[1];
+    res[2] = dot(vec3(A[6]+A[2], A[7]+A[5], 2*A[8]), x)+B[2];
+    return res;
 }
 
 // TODO : Implement
-float LocalShapeFunction::calculate(vec3 x){
+float LocalShapeFunction::calculate(vec3 x) {
     // if (!isInitialized()){
     //     throw string("Values not initialized");
     // }
