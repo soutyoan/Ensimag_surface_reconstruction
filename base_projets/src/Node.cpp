@@ -266,6 +266,17 @@ void Node::initializeAsRoot(int sizeVertices){
 	}
 }
 
+void Node::getAllBoxes(vector<Box> &boxes){
+	for (int i = 0; i < chils.size(); i++){
+		Node n = childs[i];
+		if (childs[i].isLeaf){
+			boxes.push_back(childs[i]);
+		} else {
+			n.getAllBoxes(boxes);
+		}
+	}
+}
+
 Node::~Node(){
 
 }

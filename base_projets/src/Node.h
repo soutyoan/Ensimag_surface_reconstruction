@@ -117,6 +117,11 @@ public:
     void initializeAsRoot(int sizeVertices);
 
     /*
+    Get all the boxes from the root Node.
+    */
+    void getAllBoxes(vector<Box> &boxes);
+
+    /*
     Destructor
     */
     ~Node();

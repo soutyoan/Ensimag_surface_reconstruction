@@ -637,5 +637,9 @@ float Mesh::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0){
 	root.initializeAsRoot(mesh.m_positions.size());
 
 	vec2 SwqSw = root.MPUapprox(x, eps0, mesh.m_positions, mesh.m_normals);
+
+	vector<Box> v_b;
+	root.getAllBoxes(v_b);
+
 	return SwqSw[1]/SwqSw[0];
 }
