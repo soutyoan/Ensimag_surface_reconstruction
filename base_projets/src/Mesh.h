@@ -9,6 +9,9 @@
 #include <AbstractMesh.h>
 #include "Node.h"
 
+using namespace std;
+using namespace glm;
+
 class ImplicitFunction;
 
 class Mesh : public AbstractMesh
@@ -39,13 +42,20 @@ public:
             , const unsigned int resY = 100
             , const unsigned int resZ = 100);           /// Implements the marching cube algorithm
 
-    static void ProcessCube(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vector<vec3> p); 
+    static void ProcessCube(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vector<vec3> p);
 
     /// Processes a tetrahedron during marching tetrahedron algorithm
     static void ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const glm::vec3 p[]);
 
     Node root;
     float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0);
+
+    void clearIndicesAndVertices(); 
+
+    /*
+    Recursive call on the marching cubes.
+    */
+    static void MarchingCubes(Mesh &m, Node &current);
 };
 
 #endif // MESH_H

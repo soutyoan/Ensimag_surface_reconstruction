@@ -145,7 +145,11 @@ int main()
     m.ColorFromNormals();
 
     vec3 vx(0, 0, 0);
-    m.evaluateMPUapprox(m, vx, 0.01);
+    m.evaluateMPUapprox(m, vx, 0.05);
+
+    // We destroy the indices and the vertices of m
+    m.clearIndicesAndVertices();
+    m.MarchingCubes(m, m.root);
 
     if (OUTPUT){
         // Output to folder

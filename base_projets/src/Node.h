@@ -26,11 +26,14 @@ class Node{
 
 private:
     float epsi; // Epsilon i
-    vector<Node> childs; // Childs of this node
     bool isLeaf;
     vector<int> indices;
 
 public:
+
+    vector<Node> childs; // Childs of this node
+
+    bool _isLeaf(){return isLeaf;}
 
     LocalShapeFunction Q;
 

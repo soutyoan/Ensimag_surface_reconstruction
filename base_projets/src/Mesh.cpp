@@ -638,8 +638,21 @@ float Mesh::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0){
 
 	vec2 SwqSw = root.MPUapprox(x, eps0, mesh.m_positions, mesh.m_normals);
 
-	vector<Box> v_b;
-	root.getAllBoxes(v_b);
-
 	return SwqSw[1]/SwqSw[0];
+}
+
+void Mesh::clearIndicesAndVertices(){
+	m_positions.clear();
+    m_indices.clear();
+}
+
+void Mesh::MarchingCubes(Mesh &m, Node &current){
+	if (current._isLeaf()){
+		vector<vec3> points = current.b.getListPoints();
+		ProcessCube(m, current.Q, 0, points);
+	} else {
+		for (int i = 0; i < current.childs.size(); i++){
+			MarchingCubes(m, current.childs[i]);
+		}
+	}
 }
