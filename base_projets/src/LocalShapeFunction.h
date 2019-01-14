@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include "Box.h"
 #include <Eigen/Core>
+#include "ImplicitFunction.h"
 
 using namespace std;
 using namespace glm;
@@ -19,7 +20,7 @@ using Eigen::VectorXf;
 const int SAMPLE_RATE = 5;
 
 // Q function x^TAx + b^Tx + c
-class LocalShapeFunction {
+class LocalShapeFunction : public ImplicitFunction {
 
 private:
     bool initialized;
@@ -51,13 +52,14 @@ public:
     LocalShapeFunction(vector<float>& A, vector<float>& B, float C);
     LocalShapeFunction(VectorXf& X);
     LocalShapeFunction(LocalShapeFunction& _aux);
+    ~LocalShapeFunction();
 
-    float calculate(vec3 x);
+    virtual float Eval(vec3 x);
 
     /*
     Gradient evaluation
      */
-    vec3 evalGradient(vec3 x);
+    virtual vec3 EvalDev(vec3 x);
 
 
     bool isInitialized(){return initialized;}
