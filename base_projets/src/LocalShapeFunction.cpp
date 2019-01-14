@@ -48,16 +48,16 @@ void LocalShapeFunction::updateQ(const VectorXf& X) {
     }
 }
 
-float LocalShapeFunction::calculate(vec3 x) {
-    return Eval(x);
+float LocalShapeFunction::Eval(vec3 x) {
+    return calculate(x);
 }
 
-vec3 LocalShapeFunction::evalGradient(vec3 x) {
-    return EvalDev(x);
+vec3 LocalShapeFunction::EvalDev(vec3 x) {
+    return evalGradient(x);
 }
 
 // TODO : Implement
-float LocalShapeFunction::Eval(vec3 x){
+float LocalShapeFunction::calculate(vec3 x){
     // if (!isInitialized()){
     //     throw string("Values not initialized");
     // }
@@ -121,7 +121,7 @@ void LocalShapeFunction::FindZeros(Box& b, vector<vec3>& returnValues){
  * @param  x input 3D point
  * @return   vec3 vector defined as (A + A.T).x + b
  */
-vec3 LocalShapeFunction::EvalDev(vec3 x) {
+vec3 LocalShapeFunction::evalGradient(vec3 x) {
     vec3 res(0);
     res[0] = dot(vec3(2*A[0], A[1]+A[3], A[2]+A[6]), x)+B[0];
     res[1] = dot(vec3(A[1]+A[3], 2*A[4], A[5]+A[7]), x)+B[1];
