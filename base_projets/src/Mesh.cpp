@@ -451,7 +451,7 @@ vec3 findRoot(const ImplicitFunction& function, const float isoValue, const vec3
 }
 
 // Marching cubes from the marching tetrahedrons
-void Mesh::ProcessCube(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const Box& b){
+void Mesh::ProcessCube(Mesh& mesh, vector<float> MPUValues, vector<vec3> gradients, const float isoValue, const Box& b){
 	// A cube is 6 tetrahedrons
 	//https://www.ics.uci.edu/~eppstein/projects/tetra/
 
@@ -644,7 +644,7 @@ void Mesh::MarchingCubes(Mesh &m, Node &current){
 	}
 }
 
-void Mesh::GetVertices(int sampling, Mesh &m){
+void Mesh::GetVertices(int sampling, Mesh &mesh, float eps0){
 
 	// We need to find the bounding box
 	float minX = 100000;
@@ -678,7 +678,7 @@ void Mesh::GetVertices(int sampling, Mesh &m){
 			for (int z = space.z; z <= space.z + space.lz; z+= space.lz/sampling){
 				vec3 gradient;
 				MPUValues[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] =
-					evaluateMPUapprox(m, vec3(x, y, z), space, gradient);
+					evaluateMPUapprox(mesh, vec3(x, y, z), eps0, space, gradient);
 				gradients[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] =
 					gradient;
 				k ++;
@@ -689,7 +689,7 @@ void Mesh::GetVertices(int sampling, Mesh &m){
 	}
 
 	// We destroy the indices and the vertices of m
-	m.clearIndicesAndVertices();
+	mesh.clearIndicesAndVertices();
 
 	for (int i = 0; i < sampling + 1; i++){
 		for (int j = 0; j < sampling + 1; j++){
@@ -710,7 +710,7 @@ void Mesh::GetVertices(int sampling, Mesh &m){
 						}
 					}
 				}
-				m.ProcessCube(m, values, currentGradients, 0, b);
+				mesh.ProcessCube(mesh, values, currentGradients, 0, b);
 			}
 		}
 	}

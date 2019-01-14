@@ -42,15 +42,17 @@ public:
             , const unsigned int resY = 100
             , const unsigned int resZ = 100);           /// Implements the marching cube algorithm
 
-    static void ProcessCube(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const Box& b);
+    static void ProcessCube(Mesh& mesh, vector<float> MPUValues, vector<vec3> gradients, const float isoValue, const Box& b); 
 
     /// Processes a tetrahedron during marching tetrahedron algorithm
     static void ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const glm::vec3 p[]);
 
     Node root;
-    float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0, Box broot);
+    float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0, Box broot, vec3 &gradient);
 
     void clearIndicesAndVertices();
+
+    void GetVertices(int sampling, Mesh &m, float eps0);
 
     /*
     Recursive call on the marching cubes.
