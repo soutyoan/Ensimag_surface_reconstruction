@@ -450,6 +450,26 @@ vec3 findRoot(const ImplicitFunction& function, const float isoValue, const vec3
     return p;
 }
 
+// Marching cubes from the marching tetrahedrons
+void Mesh::ProcessCube(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vector<vec3> p){
+	// A cube is 6 tetrahedrons
+	//https://www.ics.uci.edu/~eppstein/projects/tetra/
+
+	vec3 p1[4] = {p[0], p[1], p[3], p[4]};
+	vec3 p2[4] = {p[0], p[2], p[3], p[4]};
+	vec3 p3[4] = {p[4], p[6], p[2], p[3]};
+	vec3 p4[4] = {p[4], p[5], p[3], p[2]};
+	vec3 p5[4] = {p[4], p[5], p[7], p[3]};
+	vec3 p6[4] = {p[4], p[6], p[7], p[3]};
+
+	ProcessTetrahedron(mesh, function, isoValue, p1);
+	ProcessTetrahedron(mesh, function, isoValue, p2);
+	ProcessTetrahedron(mesh, function, isoValue, p3);
+	ProcessTetrahedron(mesh, function, isoValue, p4);
+	ProcessTetrahedron(mesh, function, isoValue, p5);
+	ProcessTetrahedron(mesh, function, isoValue, p6);
+}
+
 void Mesh::ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vec3 p[])
 {
     bool b[4] = {function.Eval(p[0]) > isoValue, function.Eval(p[1]) > isoValue, function.Eval(p[2]) > isoValue, function.Eval(p[3]) > isoValue};
@@ -611,7 +631,7 @@ float Mesh::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0){
 
 	Box broot(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
 
-	cout << "Box parent" << broot << endl; 
+	cout << "Box parent" << broot << endl;
 
 	root.b = broot;
 	root.initializeAsRoot(mesh.m_positions.size());

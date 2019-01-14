@@ -18,6 +18,18 @@ Box::Box(){
     lz = 0;
 }
 
+vector<vec3> Box::getListPoints(){
+    vector<vec3> points(8);
+    for (int i = 0; i < 2; i++){
+        for (int j = 0; j < 2; j++){
+            for (int k = 0; k < 2; k++){
+                points[i * 4 + j * 2 + k] = vec3(x + lx * i, y + ly * j, z + lz * k);
+            }
+        }
+    }
+    return points; 
+}
+
 std::ostream& operator<<(std::ostream &strm, const Box &b) {
     strm << "Box : \n"
         << "x " << b.x << "\n"

@@ -2,8 +2,16 @@
 #define BOX_H
 
 #include <ostream>
+#include <vector>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_precision.hpp> //i32vec3
+#include <cstdlib>
+#include <iostream>
+#include <math.h>
+#include <omp.h>
 
 using namespace std;
+using namespace glm;
 
 class Box {
 
@@ -19,8 +27,10 @@ public:
     Box(float _x, float _y, float _z, float _lx, float _ly, float _lz);
     Box();
 
+    vector<vec3> getListPoints();
+
 };
 
-std::ostream& operator<<(std::ostream &strm, const Box &b); 
+std::ostream& operator<<(std::ostream &strm, const Box &b);
 
 #endif
