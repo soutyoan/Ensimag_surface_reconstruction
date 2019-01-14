@@ -50,12 +50,17 @@ public:
     Node root;
     float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0);
 
-    void clearIndicesAndVertices(); 
+    void clearIndicesAndVertices();
 
     /*
     Recursive call on the marching cubes.
     */
     static void MarchingCubes(Mesh &m, Node &current);
+
+    int getVerticesSize(){return m_positions.size(); }
+    int getIndicesSize(){return m_indices.size(); }
+    int getNormalsSize(){return m_normals.size(); }
+    vector<vec3> getNormals(){return m_normals; }
 };
 
 #endif // MESH_H

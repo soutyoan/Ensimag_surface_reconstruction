@@ -59,7 +59,8 @@ float LossFunction::operator()(const VectorXf& X, VectorXf& gradfX) {
     		val1 += _tmp; // last one for value C
     	}
 
-    	for (q=qVec.begin(), d=dVec.begin(); q!=qVec.end() && d!=dVec.end(); q++, d++) {
+    	for (q=qVec.begin(), d=dVec.begin(); q!=qVec.end() || d!=dVec.end(); q++, d++) {
+            // cout << (*d) << " " << (*q)[0] << " " << dVec.size() << endl;
     		float _tmp = (this->Q.calculate(*q) - *d) * 2;
             res += pow(Q.calculate(*q) - *d, 2) / m;
     		// 9 components for matrix A
@@ -72,6 +73,7 @@ float LossFunction::operator()(const VectorXf& X, VectorXf& gradfX) {
     	}
 
     	gradfX[i] = val1 / W + val2 / m;
+        // cout << X[i] << " " << val1 << " " << val2 << " " << m << " " << W << endl;
  	}
 
     return res;
@@ -91,7 +93,7 @@ VectorXf LossFunction::optimizeQ() {
 
     float _val;
     int niter = solver.minimize(*this, X, _val);
-    cerr << "iter " << niter << endl;
+    // cerr << "iter " << niter << endl;
 
     return X;
 }

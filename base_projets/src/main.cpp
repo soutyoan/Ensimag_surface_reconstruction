@@ -132,24 +132,31 @@ int main()
     // Data arrays Initialization
 
     // Mesh creation
-    Mesh m("../models/triceratops.off");
+    // Mesh m("../models/triceratops.off");
 
     BarthFunction bf;
     float x = 1.8;
-    // Mesh m;
-    // m.CreateSphere(m, 50, 50);
+    Mesh m;
+    m.CreateSphere(m, 50, 50);
     // m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
 
-    m.Normalize();
-    m.ComputeNormals();
+    // m.Normalize();
+    // m.ComputeNormals();
     m.ColorFromNormals();
 
+    cout << "size vertices " << m.getVerticesSize() << endl;
+    cout << "size indices " << m.getIndicesSize() << endl;
+    cout << "size normals" << m.getNormalsSize() << endl;
+
     vec3 vx(0, 0, 0);
-    m.evaluateMPUapprox(m, vx, 0.05);
+    m.evaluateMPUapprox(m, vx, 0.1);
 
     // We destroy the indices and the vertices of m
     m.clearIndicesAndVertices();
     m.MarchingCubes(m, m.root);
+
+    cout << "size vertices " << m.getVerticesSize() << endl;
+    cout << "size indices " << m.getIndicesSize() << endl;
 
     if (OUTPUT){
         // Output to folder

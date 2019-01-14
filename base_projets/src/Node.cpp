@@ -96,6 +96,7 @@ void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_norm
 		}
 		returnValues[p] = m_vertices[return_indices[p]];
 		returnNormals[p] = m_normals[return_indices[p]];
+		// cout << "return index " << m_normals[return_indices[p]][0] << " index " << return_indices[p] << endl;
 	}
 }
 
@@ -138,12 +139,14 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 		}
 		if (addQ){
 			qVec.push_back(q);
-			float d;
+			float d = 0;
 			for (int _ind=0; _ind<6; _ind++) {
+				// cout << "d " << d << " " << i << " " << n[_ind][0] << " " << n[_ind][1] << " " << n[_ind][2] << "\n";
 				pVec.push_back(vec3(p[_ind]));
-				d += dot(n[i], q-p[i]);
+				d += dot(n[_ind], q-p[_ind]);
 			}
 			d /= 6;
+			// cout << "d " << d << "\n";
 			dVec.push_back(d);
 		}
 	}
@@ -230,15 +233,14 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 		if (isLeaf){
 			return vec2(0, 0);
 		}
-		cerr << "test\n";
 		epsi = 0;
 		for (int i = 0; i < indices.size(); i++){
 			float current = abs(Q.calculate(m_vertices[indices[i]])/norm(Q.evalGradient(m_vertices[indices[i]]), vec3(0)));
 			epsi = (current > epsi) ? current : epsi;
 		}
-		cerr << "new epsi " << epsi << endl;
+
     }
-	cout << epsi << " eps " << eps0 << endl;
+	cout << "epsi " << epsi << endl; 
     // Le nouveau epsilon a été calculé
     if (epsi > eps0){
         if (childs.size() == 0){
