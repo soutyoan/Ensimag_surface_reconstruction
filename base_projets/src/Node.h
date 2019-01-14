@@ -51,7 +51,7 @@ public:
     /*
     Function from the MPU_omplicit paper, page 3
     */
-    vec2 MPUapprox(vec3 x, float eps0, vector<vec3> &vertices, vector<vec3> &normals);
+    vec2 MPUapprox(vec3 x, float eps0, vector<vec3> &vertices, vector<vec3> &normals, vec3& approxedGrad);
 
     /*
     Create the Q function that will be used to recreate the mesh.
@@ -74,6 +74,8 @@ public:
     See (3), page 3 of the paper
     */
     float calculateWiX(vec3 vx);
+
+    vec3 gradWi(vec3 x);
 
     /*
     Calculate the result of the Q function at the point x

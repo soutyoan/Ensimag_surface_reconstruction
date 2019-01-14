@@ -149,7 +149,7 @@ int main()
     cout << "size normals" << m.getNormalsSize() << endl;
 
     vec3 vx(0, 0, 0);
-    m.evaluateMPUapprox(m, vx, 0.1);
+    m.evaluateMPUapprox(m, vx, 0.5);
 
     // We destroy the indices and the vertices of m
     m.clearIndicesAndVertices();
