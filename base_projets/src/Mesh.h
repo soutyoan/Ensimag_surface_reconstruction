@@ -48,7 +48,7 @@ public:
     static void ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const glm::vec3 p[]);
 
     Node root;
-    float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0);
+    float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0, Box broot);
 
     void clearIndicesAndVertices();
 
