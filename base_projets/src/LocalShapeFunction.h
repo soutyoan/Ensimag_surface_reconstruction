@@ -65,7 +65,7 @@ public:
     /*
     Updating the function
      */
-    void updateQ(VectorXf& X);
+    void updateQ(const VectorXf& X);
 
     /*
     Find the zeros of the function.

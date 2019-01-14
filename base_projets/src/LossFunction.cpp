@@ -27,44 +27,55 @@ float LossFunction::operator()(const VectorXf& X, VectorXf& gradfX) {
 
     float res;
 
-    float W;
+    Q.updateQ(X);
+
+    float W = 0;
     for (w=wVec.begin(); w!=wVec.end(); w++) {
         W += *w;
     }
-     int m=qVec.size();
 
-     for (int i=0; i<13; i++) {
+    if (W == 0){
+        W = 1;
+    }
 
- 		float val1, val2;
- 		w = wVec.begin();
+    int m=qVec.size();
 
- 		for (p=pVec.begin(); p!=pVec.end(); p++) {
- 			float _tmp = (*w * Q.calculate(*p)) * 2;
+    for (int i=0; i<13; i++) {
+
+    	float val1 = 0;
+        float val2 = 0;
+    	w = wVec.begin();
+
+    	for (p=pVec.begin(); p!=pVec.end(); p++) {
+    		float _tmp = (*w * Q.calculate(*p)) * 2;
             res += *w * pow(Q.calculate(*p), 2) / W;
- 			w++;
- 			// 9 components for matrix A
- 			if (i<9) {
- 				_tmp *= (*p)[int(i/3)] * (*p)[int(i%3)];
- 			} else if (i<12) { // 3 components for vector B
- 				_tmp *= (*p)[i-9];
- 			}
- 			val1 += _tmp; // last one for value C
- 		}
+    		w++;
+    		// 9 components for matrix A
+    		if (i<9) {
+    			_tmp *= (*p)[int(i/3)] * (*p)[int(i%3)];
+    		} else if (i<12) { // 3 components for vector B
+    			_tmp *= (*p)[i-9];
+    		}
+    		val1 += _tmp; // last one for value C
+    	}
 
- 		for (q=qVec.begin(), d=dVec.begin(); q!=qVec.end() && d!=dVec.end(); q++, d++) {
- 			float _tmp = (this->Q.calculate(*q) - *d) * 2;
+    	for (q=qVec.begin(), d=dVec.begin(); q!=qVec.end() && d!=dVec.end(); q++, d++) {
+    		float _tmp = (this->Q.calculate(*q) - *d) * 2;
             res += pow(Q.calculate(*q) - *d, 2) / m;
- 			// 9 components for matrix A
- 			if (i<9) {
- 				_tmp *= (*q)[int(i/3)] * (*q)[int(i%3)];
- 			} else if (i<12) { // 3 components for vector B
- 				_tmp *= (*q)[i-9];
- 			}
- 			val2 += _tmp; // last one for value C
- 		}
+    		// 9 components for matrix A
+    		if (i<9) {
+    			_tmp *= (*q)[int(i/3)] * (*q)[int(i%3)];
+    		} else if (i<12) { // 3 components for vector B
+    			_tmp *= (*q)[i-9];
+    		}
+    		val2 += _tmp; // last one for value C
+    	}
 
- 		gradfX[i] = val1 / W + val2 / m;
+    	gradfX[i] = val1 / W + val2 / m;
  	}
+
+    cout << "res " << res << endl;
+
     return res;
 }
 
@@ -76,8 +87,13 @@ VectorXf LossFunction::optimizeQ() {
     LBFGSSolver<float> solver(param);
 
     VectorXf X(13);
+    for (int i = 0; i< 13; i++){
+        X[i] = i;
+    }
+
     float _val;
     int niter = solver.minimize(*this, X, _val);
+    // cerr << "iter " << niter << endl;
 
     return X;
 }

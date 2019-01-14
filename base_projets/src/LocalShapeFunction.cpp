@@ -1,10 +1,10 @@
 #include "LocalShapeFunction.h"
 
 LocalShapeFunction::LocalShapeFunction() {
-    this->A = vector<float>(9, 0.0);
-    this->B = vector<float>(3, 0.0);
-    this->C = 0;
-    initialized = true;
+    this->A = vector<float>(9, 1.0);
+    this->B = vector<float>(3, 1.0);
+    this->C = 1.0;
+    initialized = false;
 }
 
 LocalShapeFunction::LocalShapeFunction(LocalShapeFunction& _aux) {
@@ -30,23 +30,24 @@ void LocalShapeFunction::create(vector<float> A, vector<float> B, float C){
     initialized = true;
 }
 
-void LocalShapeFunction::updateQ(VectorXf& X) {
+void LocalShapeFunction::updateQ(const VectorXf& X) {
     for (int i=0; i<13; i++) {
         if (i<9) {
             A[i] = X[i];
         } else if (i<12) {
-            B[i] = X[i];
+            B[i - 9] = X[i];
         } else {
             C = X[i];
         }
+        // cout << "test " << X[i] << endl; 
     }
 }
 
 // TODO : Implement
 float LocalShapeFunction::calculate(vec3 x){
-    if (!isInitialized()){
-        throw string("Values not initialized");
-    }
+    // if (!isInitialized()){
+    //     throw string("Values not initialized");
+    // }
     return x[0] * (A[0] * x[0] + A[1] * x[1] + A[2] * x[2]) +
         x[1] * (A[3] * x[0] + A[4] * x[1] + A[5] * x[2]) +
         x[2] * (A[6] * x[0] + A[7] * x[1] + A[8] * x[2]) +

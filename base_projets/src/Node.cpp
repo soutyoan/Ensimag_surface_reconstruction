@@ -33,6 +33,7 @@ Node::Node(const Node& n){
 	this->isLeaf = n.isLeaf;
 	this->childs = vector<Node>(n.childs);
 	this->indices = vector<int>(n.indices);
+	this->b = n.b;
 }
 
 // Return values should be a vector of size 6
@@ -149,9 +150,9 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 	vector<vec3> pVec;
 	vector<float> dVec;
 	getRemainingQpoints(m_vertices, m_normals, qVec, pVec, dVec);
-	vector<float> wVec;
+	vector<float> wVec(pVec.size());
 	for (int i=0; i<pVec.size(); i++) {
-		wVec.push_back(calculateWiX(pVec[i]));
+		wVec[i] = calculateWiX(pVec[i]);
 	}
 	LossFunction F(this->Q, qVec, pVec, dVec, wVec);
 
@@ -207,7 +208,7 @@ float Node::calculateWiX(vec3 vx){
 	float num = (Ri - norm(vx, ci));
 	num = (num>0) ? num : 0;
 
-	return num/(Ri * norm(vx, ci));
+	return pow(num/(Ri * norm(vx, ci)), 2);
 }
 
 // On retourne SwQ et Sw dans le vec2
