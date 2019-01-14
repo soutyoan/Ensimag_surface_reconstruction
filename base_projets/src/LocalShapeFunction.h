@@ -56,6 +56,10 @@ public:
 
     virtual float Eval(vec3 x);
 
+    float calculate(vec3 x);
+
+
+    vec3 evalGradient(vec3 x);
     /*
     Gradient evaluation
      */
