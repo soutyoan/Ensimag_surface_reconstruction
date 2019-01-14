@@ -42,7 +42,7 @@ public:
             , const unsigned int resY = 100
             , const unsigned int resZ = 100);           /// Implements the marching cube algorithm
 
-    static void ProcessCube(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vector<vec3> p);
+    static void ProcessCube(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const Box& b);
 
     /// Processes a tetrahedron during marching tetrahedron algorithm
     static void ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const glm::vec3 p[]);
