@@ -20,7 +20,7 @@ LocalShapeFunction::LocalShapeFunction(vector<float>& A, vector<float>& B, float
 
 LocalShapeFunction::~LocalShapeFunction()
 {
-    
+
 }
 
 LocalShapeFunction::LocalShapeFunction(VectorXf& X) {
@@ -46,6 +46,14 @@ void LocalShapeFunction::updateQ(const VectorXf& X) {
         }
         // cout << "test " << X[i] << endl;
     }
+}
+
+float LocalShapeFunction::calculate(vec3 x) {
+    return Eval(x);
+}
+
+vec3 LocalShapeFunction::evalGradient(vec3 x) {
+    return EvalDev(x);
 }
 
 // TODO : Implement
