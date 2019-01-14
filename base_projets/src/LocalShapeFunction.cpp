@@ -1,7 +1,10 @@
 #include "LocalShapeFunction.h"
 
 LocalShapeFunction::LocalShapeFunction() {
-    initialized = false;
+    this->A = vector<float>(9, 0.0);
+    this->B = vector<float>(3, 0.0);
+    this->C = 0;
+    initialized = true;
 }
 
 LocalShapeFunction::LocalShapeFunction(LocalShapeFunction& _aux) {
