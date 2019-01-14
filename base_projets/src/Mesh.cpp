@@ -451,23 +451,32 @@ vec3 findRoot(const ImplicitFunction& function, const float isoValue, const vec3
 }
 
 // Marching cubes from the marching tetrahedrons
-void Mesh::ProcessCube(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vector<vec3> p){
+void Mesh::ProcessCube(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const Box& b){
 	// A cube is 6 tetrahedrons
 	//https://www.ics.uci.edu/~eppstein/projects/tetra/
 
-	vec3 p1[4] = {p[0], p[1], p[3], p[4]};
-	vec3 p2[4] = {p[0], p[2], p[3], p[4]};
-	vec3 p3[4] = {p[4], p[6], p[2], p[3]};
-	vec3 p4[4] = {p[4], p[5], p[3], p[2]};
-	vec3 p5[4] = {p[4], p[5], p[7], p[3]};
-	vec3 p6[4] = {p[4], p[6], p[7], p[3]};
+	vec3 p000 = vec3(b.x, b.y, b.z);
+	vec3 p001 = vec3(b.x + b.lx, b.y, b.z);
+	vec3 p010 = vec3(b.x, b.y + b.ly, b.z);
+	vec3 p011 = vec3(b.x + b.lx, b.y + b.ly, b.z);
+	vec3 p100 = vec3(b.x, b.y, b.z + b.lz);
+	vec3 p101 = vec3(b.x + b.lx, b.y, b.z + b.lz);
+	vec3 p110 = vec3(b.x, b.y + b.ly, b.z + b.lz);
+	vec3 p111 = vec3(b.x + b.lx, b.y + b.ly, b.z + b.lz);
 
+	vec3 p0[4] =  {p000, p001, p011, p111};
+	vec3 p1[4] =  {p000, p011, p010, p111};
+	vec3 p2[4] =  {p000, p010, p110, p111};
+	vec3 p3[4] =  {p000, p110, p100, p111};
+	vec3 p4[4] =  {p000, p100, p101, p111};
+	vec3 p5[4] =  {p000, p101, p001, p111};
+
+	ProcessTetrahedron(mesh, function, isoValue, p0);
 	ProcessTetrahedron(mesh, function, isoValue, p1);
 	ProcessTetrahedron(mesh, function, isoValue, p2);
 	ProcessTetrahedron(mesh, function, isoValue, p3);
 	ProcessTetrahedron(mesh, function, isoValue, p4);
 	ProcessTetrahedron(mesh, function, isoValue, p5);
-	ProcessTetrahedron(mesh, function, isoValue, p6);
 }
 
 void Mesh::ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vec3 p[])
@@ -606,9 +615,36 @@ void Mesh::ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, cons
 }
 
 // MPU approximation
-float Mesh::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0){
+float Mesh::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0, Box broot, vec3 &gradient){
 
 	// First we need to recreate the root node.
+	cout << "Box parent" << broot << endl;
+
+	root.b = broot;
+	root.initializeAsRoot(mesh.m_positions.size());
+
+	vec2 SwqSw = root.MPUapprox(x, eps0, mesh.m_positions, mesh.m_normals, gradient);
+
+	return SwqSw[1]/SwqSw[0];
+}
+
+void Mesh::clearIndicesAndVertices(){
+	m_positions.clear();
+    m_indices.clear();
+}
+
+void Mesh::MarchingCubes(Mesh &m, Node &current){
+	if (current._isLeaf()){
+		vector<vec3> points = current.b.getListPoints();
+		ProcessCube(m, current.Q, 0, current.b);
+	} else {
+		for (int i = 0; i < current.childs.size(); i++){
+			MarchingCubes(m, current.childs[i]);
+		}
+	}
+}
+
+void Mesh::GetVertices(int sampling, Mesh &m){
 
 	// We need to find the bounding box
 	float minX = 100000;
@@ -629,30 +665,53 @@ float Mesh::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0){
 		if (mesh.m_positions[i][2] > maxZ){maxZ = mesh.m_positions[i][2];}
 	}
 
-	Box broot(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
+	Box space(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
 
-	cout << "Box parent" << broot << endl;
+	vector<float> MPUValues((sampling + 1) * (sampling + 1) * (sampling + 1));
+	vector<vec3> gradients((sampling + 1) * (sampling + 1) * (sampling + 1));
 
-	root.b = broot;
-	root.initializeAsRoot(mesh.m_positions.size());
+	int i = 0; int j = 0; int k = 0;
 
-	vec2 SwqSw = root.MPUapprox(x, eps0, mesh.m_positions, mesh.m_normals);
+	// Construction of the space
+	for (int x = space.x; x <= space.x + space.lx; x+= space.lx/sampling){
+		for (int y = space.y; y <= space.y + space.ly; y+= space.ly/sampling){
+			for (int z = space.z; z <= space.z + space.lz; z+= space.lz/sampling){
+				vec3 gradient;
+				MPUValues[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] =
+					evaluateMPUapprox(m, vec3(x, y, z), space, gradient);
+				gradients[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] =
+					gradient;
+				k ++;
+			}
+			j++;
+		}
+		i++;
+	}
 
-	return SwqSw[1]/SwqSw[0];
-}
+	// We destroy the indices and the vertices of m
+	m.clearIndicesAndVertices();
 
-void Mesh::clearIndicesAndVertices(){
-	m_positions.clear();
-    m_indices.clear();
-}
-
-void Mesh::MarchingCubes(Mesh &m, Node &current){
-	if (current._isLeaf()){
-		vector<vec3> points = current.b.getListPoints();
-		ProcessCube(m, current.Q, 0, points);
-	} else {
-		for (int i = 0; i < current.childs.size(); i++){
-			MarchingCubes(m, current.childs[i]);
+	for (int i = 0; i < sampling + 1; i++){
+		for (int j = 0; j < sampling + 1; j++){
+			for (int k = 0; k < sampling + 1; k++){
+				Box b(space.x + ((float)i/sampling) * space.lx,
+					space.y + ((float)i/sampling) * space.ly,
+					space.z + ((float)i/sampling) * space.lz,
+					space.lx/sampling, space.ly/sampling, space.lz/sampling);
+				vector<float> values(8);
+				vector<vec3> currentGradients(8);
+				for (int x = 0; x < 2; x++){
+					for (int y = 0; y < 2; y++){
+						for (int z = 0; z < 2; z++){
+							values[i * 2 * 2 + y * 2 + z] = MPUValues[(x+i) *
+								(sampling + 1) * (sampling + 1) + (y+j) * (sampling + 1) + k+z];
+							currentGradients[i * 2 * 2 + y * 2 + z] = gradients[(x+i) *
+								(sampling + 1) * (sampling + 1) + (y+j) * (sampling + 1) + k+z];
+						}
+					}
+				}
+				m.ProcessCube(m, values, currentGradients, 0, b);
+			}
 		}
 	}
 }

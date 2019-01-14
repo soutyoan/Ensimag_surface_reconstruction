@@ -240,7 +240,8 @@ vec3 Node::gradWi(vec3 vx) {
 vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> &m_normals, vec3& approxedGrad){
 
     vec2 SGlobal(0, 0);
-	if (norm(x, x) > R) {
+	float Ri = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
+	if (norm(x, x) > Ri) {
 		return SGlobal;
 	}
     if (!Q.isInitialized()){ // La fonction n'est pas encore créée

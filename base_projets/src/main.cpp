@@ -151,9 +151,7 @@ int main()
     vec3 vx(0, 0, 0);
     m.evaluateMPUapprox(m, vx, 0.5);
 
-    // We destroy the indices and the vertices of m
-    m.clearIndicesAndVertices();
-    m.MarchingCubes(m, m.root);
+
 
     cout << "size vertices " << m.getVerticesSize() << endl;
     cout << "size indices " << m.getIndicesSize() << endl;
