@@ -39,7 +39,7 @@ void LocalShapeFunction::updateQ(const VectorXf& X) {
         } else {
             C = X[i];
         }
-        // cout << "test " << X[i] << endl; 
+        // cout << "test " << X[i] << endl;
     }
 }
 
@@ -100,4 +100,18 @@ void LocalShapeFunction::FindZeros(Box& b, vector<vec3>& returnValues){
     }
 
     // Value returned in returnValues
+}
+
+
+/**
+ * gradient computation on x
+ * @param  x input 3D point
+ * @return   vec3 vector defined as (A + A.T).x + b
+ */
+vec3 LocalShapeFunction::evalGradient(vec3 x) {
+    vec3 res(0);
+    res[0] = dot(vec3(2*A[0], A[1]+A[3], A[2]+A[6]), x)+B[0];
+    res[1] = dot(vec3(A[1]+A[3], 2*A[4], A[5]+A[7]), x)+B[1];
+    res[2] = dot(vec3(A[6]+A[2], A[7]+A[5], 2*A[8]), x)+B[2];
+    return res;
 }

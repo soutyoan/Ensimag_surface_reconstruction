@@ -54,6 +54,11 @@ public:
 
     float calculate(vec3 x);
 
+    /*
+    Gradient evaluation
+     */
+    vec3 evalGradient(vec3 x);
+
 
     bool isInitialized(){return initialized;}
 
