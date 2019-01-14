@@ -222,6 +222,11 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 	}
     if (!Q.isInitialized()){ // La fonction n'est pas encore créée
         createQ(m_vertices, m_normals);
+		epsi = 0;
+		for (int i = 0; i < indices.size(); i++){
+			float current = abs(Q.calculate(m_vertices[indices[i]])); 
+			epsi = (current > epsi) ? current : epsi;
+		}
     }
     // Le nouveau epsilon a été calculé
     if (epsi > eps0){

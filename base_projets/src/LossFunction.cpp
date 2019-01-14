@@ -74,8 +74,6 @@ float LossFunction::operator()(const VectorXf& X, VectorXf& gradfX) {
     	gradfX[i] = val1 / W + val2 / m;
  	}
 
-    cout << "res " << res << endl;
-
     return res;
 }
 
@@ -93,7 +91,7 @@ VectorXf LossFunction::optimizeQ() {
 
     float _val;
     int niter = solver.minimize(*this, X, _val);
-    // cerr << "iter " << niter << endl;
+    cerr << "iter " << niter << endl;
 
     return X;
 }

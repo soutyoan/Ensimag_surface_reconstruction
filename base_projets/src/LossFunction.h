@@ -20,7 +20,7 @@ public:
     vector<vec3> pVec;// set of neighbours points p associated to q points
     vector<float> dVec; // set of d values associated with q points
     vector<float> wVec; // set of wi associated to auxiliar points q
-    int ITE_MAX = 2; // number of maximal iterations
+    int ITE_MAX = 50; // number of maximal iterations
     float eps=1.0e-4; // precision
     LossFunction(){}
     LossFunction(LocalShapeFunction& Q, const vector<vec3>& _qVec, const vector<vec3>& _pVec, const vector<float>& _dVec, const vector<float>& _wVec);
