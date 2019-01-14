@@ -19,18 +19,18 @@ float normVec(vector<float> vec) {
 }
 
 Node::Node(){
-	epsi = 0.1;
+	epsi = 0;
 }
 
 // PARENT CONSTRUCTOR strange before c++11, must do it like this sorry
 Node::Node(Box b){
-	epsi = 0.001;
+	epsi = 0;
 	this->b = b;
 }
 
 Node::Node(const Node& n){
 	this->epsi = n.epsi;
-	this->isLeaf = n.isLeaf;
+	this->isLeaf = false;
 	this->childs = vector<Node>(n.childs);
 	this->indices = vector<int>(n.indices);
 	this->b = n.b;
@@ -44,6 +44,11 @@ void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_norm
 
 	vector<int> return_indices(6);
 	bool flag;
+
+	if (indices.size() == 0){
+		isLeaf = true;
+		return;
+	}
 
 	// We need at least 6 points in the list of indices.
 	// We add them all in the p list
@@ -121,6 +126,7 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 	for (int i = 0; i < 9; i++){
 		vec3 q = getQpoint(i);
 		getClosestPointsInBall(m_vertices, m_normals, q, p, n);
+		if (isLeaf){return vec3(0); }
 		bool signPositive = dot(n[0], (q - p[0])) > 0;
 		bool addQ = true;
 		for (int j = 0; j < 6; j++){
@@ -150,6 +156,7 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 	vector<vec3> pVec;
 	vector<float> dVec;
 	getRemainingQpoints(m_vertices, m_normals, qVec, pVec, dVec);
+	if (isLeaf){return; }
 	vector<float> wVec(pVec.size());
 	for (int i=0; i<pVec.size(); i++) {
 		wVec[i] = calculateWiX(pVec[i]);
@@ -214,20 +221,24 @@ float Node::calculateWiX(vec3 vx){
 // On retourne SwQ et Sw dans le vec2
 vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> &m_normals){
 
-	cout << "HELLO\n" ;
-
     vec2 SGlobal(0, 0);
 	if (norm(x, x) > R) {
 		return SGlobal;
 	}
     if (!Q.isInitialized()){ // La fonction n'est pas encore créée
         createQ(m_vertices, m_normals);
+		if (isLeaf){
+			return vec2(0, 0);
+		}
+		cerr << "test\n";
 		epsi = 0;
 		for (int i = 0; i < indices.size(); i++){
-			float current = abs(Q.calculate(m_vertices[indices[i]])); 
+			float current = abs(Q.calculate(m_vertices[indices[i]])/norm(Q.evalGradient(m_vertices[indices[i]]), vec3(0)));
 			epsi = (current > epsi) ? current : epsi;
 		}
+		cerr << "new epsi " << epsi << endl;
     }
+	cout << epsi << " eps " << eps0 << endl;
     // Le nouveau epsilon a été calculé
     if (epsi > eps0){
         if (childs.size() == 0){
