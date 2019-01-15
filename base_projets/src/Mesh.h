@@ -42,6 +42,8 @@ public:
 
     /// Processes a tetrahedron during marching tetrahedron algorithm
     static void ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const glm::vec3 p[]);
+
+    static void ProcessCube(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const Box& b);
 };
 
 #endif // MESH_H

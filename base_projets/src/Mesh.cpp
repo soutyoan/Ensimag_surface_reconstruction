@@ -583,3 +583,32 @@ void Mesh::ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, cons
 
     cerr << "no solution found in marching tetrahedron !!" << endl;
 }
+
+// Marching cubes from the marching tetrahedrons
+void Mesh::ProcessCube(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const Box& b){
+	// A cube is 6 tetrahedrons
+	//https://www.ics.uci.edu/~eppstein/projects/tetra/
+
+	vec3 p000 = vec3(b.x, b.y, b.z);
+	vec3 p001 = vec3(b.x + b.lx, b.y, b.z);
+	vec3 p010 = vec3(b.x, b.y + b.ly, b.z);
+	vec3 p011 = vec3(b.x + b.lx, b.y + b.ly, b.z);
+	vec3 p100 = vec3(b.x, b.y, b.z + b.lz);
+	vec3 p101 = vec3(b.x + b.lx, b.y, b.z + b.lz);
+	vec3 p110 = vec3(b.x, b.y + b.ly, b.z + b.lz);
+	vec3 p111 = vec3(b.x + b.lx, b.y + b.ly, b.z + b.lz);
+
+	vec3 p0[4] =  {p000, p001, p011, p111};
+	vec3 p1[4] =  {p000, p011, p010, p111};
+	vec3 p2[4] =  {p000, p010, p110, p111};
+	vec3 p3[4] =  {p000, p110, p100, p111};
+	vec3 p4[4] =  {p000, p100, p101, p111};
+	vec3 p5[4] =  {p000, p101, p001, p111};
+
+	ProcessTetrahedron(mesh, function, isoValue, p0);
+	ProcessTetrahedron(mesh, function, isoValue, p1);
+	ProcessTetrahedron(mesh, function, isoValue, p2);
+	ProcessTetrahedron(mesh, function, isoValue, p3);
+	ProcessTetrahedron(mesh, function, isoValue, p4);
+	ProcessTetrahedron(mesh, function, isoValue, p5);
+}
