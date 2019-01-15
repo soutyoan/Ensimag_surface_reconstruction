@@ -1,7 +1,7 @@
 #include "Node.h"
 
 float norm(vec3 x, vec3 y){
-	return pow(pow(x[0] - y[0], 2) + pow(x[1] - y[1], 2) + pow(x[2] - y[2], 2), 0.5);
+	return sqrt(pow(x[0] - y[0], 2) + pow(x[1] - y[1], 2) + pow(x[2] - y[2], 2));
 }
 
 /**
@@ -26,7 +26,7 @@ Node::Node(){
 // PARENT CONSTRUCTOR strange before c++11, must do it like this sorry
 Node::Node(Box b){
 	epsi = 0;
-	isLeaf = false; 
+	isLeaf = false;
 	this->b = b;
 }
 
@@ -214,10 +214,9 @@ float Node::calculateWiX(vec3 vx){
 	// Radius of the cube
 	float Ri = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
 
-	float x = 3 * norm(ci, vx)/Ri;
-
 	// Second formula from the paper
 	float num = (Ri - norm(vx, ci));
+	// cout << "num " << num << " " << Ri << " " << norm(vx, ci) << endl;
 	num = (num>0) ? num : 0;
 
 	return pow(num/(Ri * norm(vx, ci)), 2);
@@ -243,7 +242,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 
     vec2 SGlobal(0, 0);
 	float Ri = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
-	if (norm(x, x) > Ri) {
+	if (norm(x, vec3(0)) > Ri) {
 		return SGlobal;
 	}
     if (!Q.isInitialized()){ // La fonction n'est pas encore créée
@@ -265,15 +264,18 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
             createChilds(m_vertices);
         }
         for (int i = 0; i < childs.size(); i++){ // iterere sur les enfants
+			// cout << "CREATE CHILDS\n";
             vec2 S = childs.at(i).MPUapprox(x, eps0, m_vertices, m_normals);
             SGlobal[0] += S[0];
             SGlobal[1] += S[1];
+			// cout << "global " << SGlobal[0] << " " << SGlobal[1] << endl;
         }
     } else {
         isLeaf = true;
 		float wix = this->calculateWiX(x);
         SGlobal[0] += wix * calculateQ(x);
         SGlobal[1] += wix;
+		// cout << "ici " << SGlobal[0] << " " << SGlobal[1] << endl;
     }
     return SGlobal;
 }

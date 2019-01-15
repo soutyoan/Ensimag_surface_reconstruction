@@ -149,11 +149,15 @@ int main()
     cout << "size indices " << m.getIndicesSize() << endl;
     cout << "size normals" << m.getNormalsSize() << endl;
 
-    vec3 vx(0, 0, 0);
-    m.GetVertices(2, m, 0.5);
+    m.GetVertices(2, m, 1);
 
     cout << "size vertices " << m.getVerticesSize() << endl;
     cout << "size indices " << m.getIndicesSize() << endl;
+
+    m.RemoveDouble();
+    m.Normalize();
+    m.ComputeNormals();
+    m.ColorFromNormals();
 
     if (OUTPUT){
         // Output to folder

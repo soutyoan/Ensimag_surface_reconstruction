@@ -34,10 +34,15 @@ float Mesh_Reconstruction::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0
 	// First we need to recreate the root node.
 	// cout << "Box parent" << broot << endl;
 
+	root = Node(); // Reinitialize the root everytime
 	root.b = broot;
 	root.initializeAsRoot(mesh.m_positions.size());
 
 	vec2 SwqSw = root.MPUapprox(x, eps0, mesh.m_positions, mesh.m_normals);
+
+	if (SwqSw[0] == 0){
+		return 0;
+	}
 
 	return SwqSw[1]/SwqSw[0];
 }
@@ -96,6 +101,7 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 				cout << "Tree creation k " << k << " out of " << sampling << endl;
 				MPUValues[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] =
 					evaluateMPUapprox(mesh, vec3(x, y, z), eps0, space);
+				cout << "value " << MPUValues[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] << endl;
 				k ++;
 			}
 			j++;
