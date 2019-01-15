@@ -16,6 +16,11 @@ LossFunction::LossFunction(LocalShapeFunction& _Q, const vector<vec3>& _qVec, co
     this->qVec = vector<vec3>(_qVec);
     this->dVec = vector<float>(_dVec);
     this->wVec = vector<float>(_wVec);
+    this->W = 0.0;
+    this->m = _qVec.size();
+    for (int i=0; i<_wVec.size(); i++) {
+        this->W += _wVec[i];
+    }
 }
 
 
@@ -79,21 +84,72 @@ float LossFunction::operator()(const VectorXf& X, VectorXf& gradfX) {
     return res;
 }
 
-VectorXf LossFunction::optimizeQ() {
-    LBFGSParam<float> param;
-    param.epsilon = eps;
-    param.max_iterations = ITE_MAX;
+/**
+ * Computation of 13 size vector (x1^2, ..., 1)
+ * @param  x input 13 size vector
+ * @return   e_x
+ */
+VectorXf LossFunction::e_x(const vec3& x)
+{
+    VectorXf res(13);
+    res << pow(x[0], 2), x[0]*x[1], x[0]*x[2], x[1]*x[0], pow(x[1], 2), x[1]*x[2], x[2]*x[0], x[2]*x[1], pow(x[2], 2), x[0], x[1], x[2], 1;
+    return res;
+}
 
-    LBFGSSolver<float> solver(param);
-
-    VectorXf X(13);
-    for (int i = 0; i< 13; i++){
-        X[i] = i;
+void LossFunction::initM(MatrixXf& M)
+{
+    vector<VectorXf> _ep;
+    vector<VectorXf> _eq;
+    for (int i=0; i<pVec.size(); i++) {
+        _ep.push_back(e_x(pVec[i]));
+    }
+    for (int i=0; i<qVec.size(); i++) {
+        _eq.push_back(e_x(qVec[i]));
     }
 
-    float _val;
-    int niter = solver.minimize(*this, X, _val);
-    // cerr << "iter " << niter << endl;
+    for (int k=0; k<13; k++) {
 
-    return X;
+        for (int l=0; l<13; l++) {
+            float val1=0.0;
+            float val2=0.0;
+
+            for (int p=0; p<pVec.size(); p++) {
+                val1 += wVec[p] * _ep[p][k] * _ep[p][l];
+            }
+
+            for (int q=0; q<qVec.size(); q++) {
+                val2 += _eq[q][k] * _eq[q][l];
+            }
+
+            M(k,l) = 2/W * val1 + 2/m * val2;
+        }
+    }
+}
+
+void LossFunction::initY(VectorXf& y)
+{
+    vector<VectorXf> _eq;
+
+    for (int i=0; i<qVec.size(); i++) {
+        _eq.push_back(e_x(qVec[i]));
+    }
+
+    for (int k=0; k<13; k++) {
+        float val=0.0;
+        for (int q=0; q<qVec.size(); q++) {
+            val += dVec[q] * _eq[q][k];
+        }
+        y[k] = val;
+    }
+}
+
+VectorXf LossFunction::optimizeQ() {
+
+    MatrixXf M(13, 13);
+    VectorXf y(13);
+    initM(M); initY(y);
+    VectorXf x(13);
+
+    x = M.colPivHouseholderQr().solve(y);
+    return x;
 }
