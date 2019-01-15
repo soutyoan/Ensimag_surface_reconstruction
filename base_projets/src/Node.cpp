@@ -242,7 +242,8 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 
     vec2 SGlobal(0, 0);
 	float Ri = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
-	if (norm(x, vec3(0)) > Ri) {
+	vec3 ci(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
+	if (norm(x, ci) > Ri) {
 		return SGlobal;
 	}
     if (!Q.isInitialized()){ // La fonction n'est pas encore créée
@@ -273,6 +274,9 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
     } else {
         isLeaf = true;
 		float wix = this->calculateWiX(x);
+		// cerr << "WIX  XXXXXXXXXXXXXXXXXXXXX" << wix << endl;
+		vec3 ci(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
+		// cerr << Ri << " " << norm(x, ci) << endl;
         SGlobal[0] += wix * calculateQ(x);
         SGlobal[1] += wix;
 		// cout << "ici " << SGlobal[0] << " " << SGlobal[1] << endl;

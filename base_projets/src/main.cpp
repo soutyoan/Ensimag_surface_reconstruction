@@ -143,20 +143,20 @@ int main()
 
     // m.Normalize();
     // m.ComputeNormals();
-    m.ColorFromNormals();
+    // m.ColorFromNormals();
 
     cout << "size vertices " << m.getVerticesSize() << endl;
     cout << "size indices " << m.getIndicesSize() << endl;
     cout << "size normals" << m.getNormalsSize() << endl;
 
-    m.GetVertices(2, m, 1);
+    m.GetVertices(8, m, 0.5);
 
     cout << "size vertices " << m.getVerticesSize() << endl;
     cout << "size indices " << m.getIndicesSize() << endl;
 
-    m.RemoveDouble();
-    m.Normalize();
-    m.ComputeNormals();
+    // m.RemoveDouble();
+    // m.Normalize();
+    // m.ComputeNormals();
     m.ColorFromNormals();
 
     if (OUTPUT){
