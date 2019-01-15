@@ -57,5 +57,6 @@ file(
     src/*.h
 )
 
-add_executable(projet  ${shader_file} ${source_files})
-target_link_libraries(projet ${ALL_LIBS})
+add_library(lib_reconstruction SHARED ${shader_file} ${source_files})
+
+add_subdirectory(test)
