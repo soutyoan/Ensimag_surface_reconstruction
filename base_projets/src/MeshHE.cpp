@@ -536,4 +536,3 @@ void HalfEdge::display() const
     else
         cout << "| twin: NULL" << endl;
 }
-
