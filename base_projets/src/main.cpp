@@ -30,6 +30,7 @@
 using namespace glm;
 using namespace std;
 
+#define DEBUG false
 
 static void cursor_position_callback(int xpos, int ypos);
 static void mouse_wheel_callback(int wheel_pos);
@@ -138,8 +139,8 @@ int main()
     BarthFunction bf;
     float x = 1.8;
     Mesh_Reconstruction m;
-    m.CreateSphere(m, 50, 50);
-    // m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
+    // m.CreateSphere(m, 50, 50);
+    m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
 
     // m.Normalize();
     // m.ComputeNormals();
@@ -149,12 +150,12 @@ int main()
     cout << "size indices " << m.getIndicesSize() << endl;
     cout << "size normals" << m.getNormalsSize() << endl;
 
-    m.GetVertices(8, m, 0.5);
+    m.GetVertices(10, m, 0.2);
 
     cout << "size vertices " << m.getVerticesSize() << endl;
     cout << "size indices " << m.getIndicesSize() << endl;
 
-    // m.RemoveDouble();
+    m.RemoveDouble(0.03);
     // m.Normalize();
     // m.ComputeNormals();
     m.ColorFromNormals();

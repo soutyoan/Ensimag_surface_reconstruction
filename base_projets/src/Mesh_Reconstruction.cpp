@@ -42,7 +42,7 @@ float Mesh_Reconstruction::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0
 
 	// cout << "test " << SwqSw[1] << " "<<SwqSw[0] << endl;
 
-	if ((SwqSw[0] == 0) || (std::isinf(SwqSw[0]))){
+	if ((SwqSw[0] == 0) || (std::isinf(SwqSw[0])) || (std::isinf(SwqSw[1]))){
 		return 0;
 	}
 
@@ -88,6 +88,8 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 
 	Box space(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
 
+	cout << "BOX " << space << endl;
+
 	vector<float> MPUValues((sampling + 1) * (sampling + 1) * (sampling + 1));
 
 	int i = 0; int j = 0; int k = 0;
@@ -97,10 +99,10 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 		cout << "Tree creation i" << i << " out of " << sampling << endl;
 		j = 0;
 		for (float y = space.y; y <= space.y + space.ly; y+= space.ly/sampling){
-			cout << "Tree creation j " << j << " out of " << sampling << endl;
+			// cout << "Tree creation j " << j << " out of " << sampling << endl;
 			k = 0;
 			for (float z = space.z; z <= space.z + space.lz; z+= space.lz/sampling){
-				cout << "Tree creation k " << k << " out of " << sampling << endl;
+				// cout << "Tree creation k " << k << " out of " << sampling << endl;
 				MPUValues[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] =
 					evaluateMPUapprox(mesh, vec3(x, y, z), eps0, space);
 				// cout << "value " << MPUValues[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] << endl;
@@ -116,13 +118,13 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 
 	OneFunction f;
 
-	for (int i = 0; i < sampling + 1; i++){
+	for (int i = 0; i < sampling; i++){
 		cout << "Marching cubes " << i << " out of " << sampling << endl;
-		for (int j = 0; j < sampling + 1; j++){
-			for (int k = 0; k < sampling + 1; k++){
-				Box b(space.x + ((float)i/sampling) * space.lx,
-					space.y + ((float)i/sampling) * space.ly,
-					space.z + ((float)i/sampling) * space.lz,
+		for (int j = 0; j < sampling; j++){
+			for (int k = 0; k < sampling; k++){
+				Box b(space.x + i * (float)space.lx/sampling,
+					space.y + j * (float)space.ly/sampling,
+					space.z + k * (float)space.lz/sampling,
 					space.lx/sampling, space.ly/sampling, space.lz/sampling);
 				vector<float> values(8);
 				vector<vec3> points = b.getListPoints();
@@ -142,11 +144,19 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 
 vec3 findRoot(const ImplicitFunction& function, const float v0, const float v1, const vec3& p0, const vec3& p1, unsigned nb_iter = 10)
 {
-    vec3 p00 = p0;
-    vec3 p10 = p1;
+    vec3 p00;
+    vec3 p10;
+
+	if (v1 < v0){
+		p00 = p1;
+		p10 = p0;
+	} else {
+		p00 = p0;
+		p10 = p1;
+	}
 
 	float total = abs(v0) + abs(v1);
-    vec3 p = (v0 * p00 + p10 * v1)/total;
+    vec3 p = p0 + (abs(v0)/total) * (p1 - p0);
 
     return p;
 }
