@@ -19,6 +19,7 @@
 #include "ImplicitFunction.h"
 #include "MeshHE.h"
 #include "Object.h"
+#include "Mesh_Reconstruction.h"
 
 #include <sys/stat.h>
 
@@ -136,7 +137,7 @@ int main()
 
     BarthFunction bf;
     float x = 1.8;
-    Mesh m;
+    Mesh_Reconstruction m;
     m.CreateSphere(m, 50, 50);
     // m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
 
@@ -149,9 +150,7 @@ int main()
     cout << "size normals" << m.getNormalsSize() << endl;
 
     vec3 vx(0, 0, 0);
-    m.evaluateMPUapprox(m, vx, 0.5);
-
-
+    m.GetVertices(2, m, 0.5);
 
     cout << "size vertices " << m.getVerticesSize() << endl;
     cout << "size indices " << m.getIndicesSize() << endl;

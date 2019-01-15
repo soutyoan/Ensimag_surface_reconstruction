@@ -51,7 +51,7 @@ public:
     /*
     Function from the MPU_omplicit paper, page 3
     */
-    vec2 MPUapprox(vec3 x, float eps0, vector<vec3> &vertices, vector<vec3> &normals, vec3& approxedGrad);
+    vec2 MPUapprox(vec3 x, float eps0, vector<vec3> &vertices, vector<vec3> &normals);
 
     /*
     Create the Q function that will be used to recreate the mesh.

@@ -59,9 +59,6 @@ class AbstractMesh
     void Normalize();                               /// Normalises and centers this mesh
     virtual void ComputeNormals();                  /// Computes new normals for each vertex of this mesh
 
-
-protected:
-
     // Attributes
     std::vector<glm::vec3> m_positions;             /// Container for the vertices positions
     std::vector<glm::vec3> m_normals;               /// Container for the vertices normals
@@ -70,4 +67,3 @@ protected:
 };
 
 #endif // ABSTRACT_MESH_HE_H
-
