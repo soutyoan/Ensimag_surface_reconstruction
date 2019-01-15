@@ -237,7 +237,7 @@ vec3 Node::gradWi(vec3 vx) {
  * @param  MPUapproxGrad output normal vector grad(f(x))
  * @return               SwQ, Sw in order to get f(x) = SwQ / Sw
  */
-vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> &m_normals, vec3& approxedGrad){
+vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> &m_normals){
 
     vec2 SGlobal(0, 0);
 	float Ri = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
@@ -256,14 +256,14 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 		}
 
     }
-	cout << "epsi " << epsi << endl;
+	// cout << "epsi " << epsi << endl;
     // Le nouveau epsilon a été calculé
     if (epsi > eps0){
         if (childs.size() == 0){
             createChilds(m_vertices);
         }
         for (int i = 0; i < childs.size(); i++){ // iterere sur les enfants
-            vec2 S = childs.at(i).MPUapprox(x, eps0, m_vertices, m_normals, approxedGrad);
+            vec2 S = childs.at(i).MPUapprox(x, eps0, m_vertices, m_normals);
             SGlobal[0] += S[0];
             SGlobal[1] += S[1];
         }
@@ -273,8 +273,6 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 		float wix = this->calculateWiX(x);
         SGlobal[0] += wix * calculateQ(x);
         SGlobal[1] += wix;
-		// gradient updating
-		approxedGrad +=calculateQ(x) * gradWi(x) + wix * Q.EvalDev(x);
     }
     return SGlobal;
 }

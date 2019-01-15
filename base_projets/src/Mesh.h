@@ -19,7 +19,7 @@ class Mesh : public AbstractMesh
 public:
 
     // Constructors
-    Mesh(){}                        /// Empty constructor
+    Mesh() : AbstractMesh(){}       /// Empty constructor
     Mesh(const char* filename);     /// Imports a mesh from an OFF File
 
     // utils
@@ -31,8 +31,6 @@ public:
     static void CreateCube2(Mesh& mesh);            /// Creates a cube (vertices not duplicated)
     static void CreateSphere(Mesh& mesh, unsigned int Nu = 100, unsigned int Nv = 50);  /// Creates a UV sphere
 
-
-
     // marching tetrahedra
     static void CreateIsoSurface(Mesh& mesh, const ImplicitFunction& function, const float isoValue = 0.5
             , const float minX = -1.0, const float maxX = 1.0
@@ -42,27 +40,8 @@ public:
             , const unsigned int resY = 100
             , const unsigned int resZ = 100);           /// Implements the marching cube algorithm
 
-    static void ProcessCube(Mesh& mesh, vector<float> MPUValues, vector<vec3> gradients, const float isoValue, const Box& b); 
-
     /// Processes a tetrahedron during marching tetrahedron algorithm
     static void ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const glm::vec3 p[]);
-
-    Node root;
-    float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0, Box broot, vec3 &gradient);
-
-    void clearIndicesAndVertices();
-
-    void GetVertices(int sampling, Mesh &m, float eps0);
-
-    /*
-    Recursive call on the marching cubes.
-    */
-    static void MarchingCubes(Mesh &m, Node &current);
-
-    int getVerticesSize(){return m_positions.size(); }
-    int getIndicesSize(){return m_indices.size(); }
-    int getNormalsSize(){return m_normals.size(); }
-    vector<vec3> getNormals(){return m_normals; }
 };
 
 #endif // MESH_H
