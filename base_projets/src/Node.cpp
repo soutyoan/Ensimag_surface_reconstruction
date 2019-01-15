@@ -19,12 +19,14 @@ float normVec(vector<float> vec) {
 }
 
 Node::Node(){
+	isLeaf = false;
 	epsi = 0;
 }
 
 // PARENT CONSTRUCTOR strange before c++11, must do it like this sorry
 Node::Node(Box b){
 	epsi = 0;
+	isLeaf = false; 
 	this->b = b;
 }
 
@@ -269,7 +271,6 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
         }
     } else {
         isLeaf = true;
-		cout << b << "\n";
 		float wix = this->calculateWiX(x);
         SGlobal[0] += wix * calculateQ(x);
         SGlobal[1] += wix;

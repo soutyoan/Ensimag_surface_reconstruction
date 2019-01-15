@@ -32,7 +32,7 @@ void Mesh_Reconstruction::ProcessCube(Mesh& mesh, const ImplicitFunction& functi
 float Mesh_Reconstruction::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0, Box broot){
 
 	// First we need to recreate the root node.
-	cout << "Box parent" << broot << endl;
+	// cout << "Box parent" << broot << endl;
 
 	root.b = broot;
 	root.initializeAsRoot(mesh.m_positions.size());
@@ -86,9 +86,14 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 	int i = 0; int j = 0; int k = 0;
 
 	// Construction of the space
-	for (int x = space.x; x <= space.x + space.lx; x+= space.lx/sampling){
-		for (int y = space.y; y <= space.y + space.ly; y+= space.ly/sampling){
-			for (int z = space.z; z <= space.z + space.lz; z+= space.lz/sampling){
+	for (float x = space.x; x <= space.x + space.lx; x+= space.lx/sampling){
+		cout << "Tree creation i" << i << " out of " << sampling << endl;
+		j = 0;
+		for (float y = space.y; y <= space.y + space.ly; y+= space.ly/sampling){
+			cout << "Tree creation j " << j << " out of " << sampling << endl;
+			k = 0;
+			for (float z = space.z; z <= space.z + space.lz; z+= space.lz/sampling){
+				cout << "Tree creation k " << k << " out of " << sampling << endl;
 				MPUValues[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] =
 					evaluateMPUapprox(mesh, vec3(x, y, z), eps0, space);
 				k ++;
@@ -104,6 +109,7 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 	OneFunction f;
 
 	for (int i = 0; i < sampling + 1; i++){
+		cout << "Marching cubes " << i << " out of " << sampling << endl;
 		for (int j = 0; j < sampling + 1; j++){
 			for (int k = 0; k < sampling + 1; k++){
 				Box b(space.x + ((float)i/sampling) * space.lx,
@@ -115,7 +121,7 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 				for (int x = 0; x < 2; x++){
 					for (int y = 0; y < 2; y++){
 						for (int z = 0; z < 2; z++){
-							values[i * 2 * 2 + y * 2 + z] = MPUValues[(x+i) *
+							values[x * 2 * 2 + y * 2 + z] = MPUValues[(x+i) *
 								(sampling + 1) * (sampling + 1) + (y+j) * (sampling + 1) + k+z];
 						}
 					}
