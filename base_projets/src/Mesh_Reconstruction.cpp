@@ -191,7 +191,7 @@ vec3 findRoot(const ImplicitFunction& function, const float v0, const float v1, 
 
 void Mesh_Reconstruction::ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float MPU_values[], const vec3 p[])
 {
-    bool b[4] = {MPU_values[0] > 0, MPU_values[1] > 0, MPU_values[2] > 0, MPU_values[0] > 3};
+    bool b[4] = {MPU_values[0] > 0, MPU_values[1] > 0, MPU_values[2] > 0, MPU_values[3] > 0};
 
     unsigned int N = mesh.m_positions.size();
     if(!b[0] && !b[1] && !b[2] && !b[3] || b[0] && b[1] && b[2] && b[3])
