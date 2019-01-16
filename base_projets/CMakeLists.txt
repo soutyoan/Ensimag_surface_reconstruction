@@ -60,3 +60,4 @@ file(
 add_library(lib_reconstruction SHARED ${shader_file} ${source_files})
 
 add_subdirectory(test)
+add_subdirectory(release)
