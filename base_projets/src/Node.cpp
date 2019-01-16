@@ -243,12 +243,16 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
     vec2 SGlobal(0, 0);
 	float Ri = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
 	vec3 ci(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
-	if ((norm(x, ci) > Ri) || (indices.size() < 15)) {
+	if ((norm(x, ci) > Ri)) {
 		return SGlobal;
+	}
+	if (indices.size() < 15){
+		// cout << "TOO FEW POINTS\n";
 	}
     if (!Q.isInitialized()){ // La fonction n'est pas encore créée
         createQ(m_vertices, m_normals);
 		if (isLeaf){
+			// cout << "IS LEAF\n";
 			return vec2(0, 0);
 		}
 		epsi = 0;
@@ -261,26 +265,30 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 	// cout << "epsi " << epsi << endl;
     // Le nouveau epsilon a été calculé
     if (epsi > eps0){
+		bool oneValidChild = false;
         if (childs.size() == 0){
+			// cout << "creating childs\n";
             createChilds(m_vertices);
         }
         for (int i = 0; i < childs.size(); i++){ // iterere sur les enfants
 			// cout << "CREATE CHILDS\n";
             vec2 S = childs.at(i).MPUapprox(x, eps0, m_vertices, m_normals);
+			oneValidChild = childs.at(i).isValidChild() || oneValidChild;
             SGlobal[0] += S[0];
             SGlobal[1] += S[1];
 			// cout << "global " << SGlobal[0] << " " << SGlobal[1] << endl;
         }
-    } else {
-        isLeaf = true;
-		float wix = this->calculateWiX(x);
-		// cerr << "WIX  XXXXXXXXXXXXXXXXXXXXX" << wix << endl;
-		vec3 ci(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
-		// cerr << Ri << " " << norm(x, ci) << endl;
-        SGlobal[0] += wix * calculateQ(x);
-        SGlobal[1] += wix;
-		// cout << "ici " << SGlobal[0] << " " << SGlobal[1] << endl;
+		if (oneValidChild){
+			return SGlobal;
+		}
     }
+    isLeaf = true;
+	float wix = this->calculateWiX(x);
+	// cerr << "WIX  XXXXXXXXXXXXXXXXXXXXX" << wix << endl;
+	// cerr << Ri << " " << norm(x, ci) << endl;
+    SGlobal[0] += wix * calculateQ(x);
+    SGlobal[1] += wix;
+	// cout << "ici " << SGlobal[0] << " " << SGlobal[1] << endl;
     return SGlobal;
 }
 

@@ -40,6 +40,12 @@ float Mesh_Reconstruction::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0
 
 	vec2 SwqSw = root.MPUapprox(x, eps0, mesh.m_positions, mesh.m_normals);
 
+	if ((std::isinf(SwqSw[0])) || (std::isinf(SwqSw[1]))){
+		cout << "NAN";
+	}
+
+	// cout << "test " << SwqSw[1] << " " <<SwqSw[0] << " 0" << endl;
+
 	if ((SwqSw[0] == 0) || (std::isinf(SwqSw[0])) || (std::isinf(SwqSw[1]))){
 		// cout << "test " << SwqSw[1] << " " <<SwqSw[0] << " 0" << endl;
 		return 0;
@@ -98,6 +104,7 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 	for (float x = space.x - 2 * (space.lx/sampling); x <= space.x + space.lx + 2 * (space.lx/sampling); x+= space.lx/sampling){
 		// cout << "Tree creation i" << i << " out of " << sampling << endl;
 		j = 0;
+		cout << "------------------------------------------------------" << endl;
 		for (float y = space.y - 2 * (space.ly/sampling); y <= space.y + space.ly + 2 * (space.ly/sampling); y+= space.ly/sampling){
 			// cout << "Tree creation j " << j << " out of " << sampling << endl;
 			k = 0;
@@ -111,7 +118,7 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 				} else if (MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] < 0) {
 					cout << "- ";
 				} else {
-					cout << "0 ";
+					cout << " ";
 					totalZeros ++;
 				}
 				k ++;

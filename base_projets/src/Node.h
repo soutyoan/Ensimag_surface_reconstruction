@@ -126,6 +126,8 @@ public:
     */
     void getAllBoxes(vector<Box> &boxes);
 
+    bool isValidChild(){return (indices.size() > 15);}
+
     /*
     Destructor
     */
