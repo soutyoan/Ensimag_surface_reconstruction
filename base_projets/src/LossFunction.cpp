@@ -113,7 +113,7 @@ void LossFunction::initM(MatrixXf& M)
         M2 += (eq*eq.transpose());
     }
 
-    M = M1+M2;
+    M = 2.0/W*M1+2.0/m*M2;
 
     // cout << "M " << endl << M << endl;
 }
