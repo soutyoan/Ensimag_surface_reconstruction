@@ -6,9 +6,9 @@
  * Recopied constructor
  * @param _Q    input local shape function object
  * @param _pVec set of p points
- * @param _qVec [description]
- * @param _dVec [description]
- * @param _wVec [description]
+ * @param _qVec set of q points
+ * @param _dVec set of dq values
+ * @param _wVec set of wp values
  */
 LossFunction::LossFunction(LocalShapeFunction& _Q, const vector<vec3>& _qVec, const vector<vec3>& _pVec, const vector<float>& _dVec, const vector<float>& _wVec) {
     this->Q = LocalShapeFunction(_Q);
@@ -93,28 +93,42 @@ VectorXf LossFunction::e_x(const vec3& x)
 {
     VectorXf res(13);
     res << pow(x[0], 2), x[0]*x[1], x[0]*x[2], x[1]*x[0], pow(x[1], 2), x[1]*x[2], x[2]*x[0], x[2]*x[1], pow(x[2], 2), x[0], x[1], x[2], 1;
+    // cout << res <<endl;
     return res;
 }
 
 void LossFunction::initM(MatrixXf& M)
 {
+    MatrixXf M1(13,13);
+    MatrixXf M2(13,13);
     for (int p=0; p<pVec.size(); p++) {
         VectorXf ep = e_x(pVec[p]);
-        M += wVec[p] * (ep * ep.transpose());
+        MatrixXf _aux(13,13);
+        _aux = ep*ep.transpose();
+        M1 += wVec[p]*_aux;
     }
 
     for (int q=0; q<qVec.size(); q++) {
         VectorXf eq = e_x(qVec[q]);
-        M += eq* eq.transpose();
+        M2 += (eq*eq.transpose());
     }
+
+    M = M1+M2;
+
+    // cout << "M " << endl << M << endl;
 }
 
 void LossFunction::initY(VectorXf& y)
 {
+    if (m==0) {
+        return;
+    }
     for (int q=0; q<qVec.size(); q++) {
         VectorXf eq = e_x(qVec[q]);
-        y += dVec[q] * eq;
+        y += (2.0*dVec[q]/m) * eq;
     }
+
+    // cout << "Y " << y << endl;
 }
 
 VectorXf LossFunction::optimizeQ() {
@@ -125,5 +139,6 @@ VectorXf LossFunction::optimizeQ() {
     VectorXf x(13);
 
     x = M.colPivHouseholderQr().solve(y);
+    // cout << "solution founded " << x << endl;
     return x;
 }

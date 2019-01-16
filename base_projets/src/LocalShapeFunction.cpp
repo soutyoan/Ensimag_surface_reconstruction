@@ -63,7 +63,6 @@ vec3 LocalShapeFunction::EvalDev(vec3 x) const {
     return res;
 }
 
-// TODO : Implement
 float LocalShapeFunction::calculate(vec3 x) {
     // if (!isInitialized()){
     //     throw string("Values not initialized");

@@ -160,12 +160,14 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 	vector<vec3> qVec;
 	vector<vec3> pVec;
 	vector<float> dVec;
+	vector<float> wVec;
 	getRemainingQpoints(m_vertices, m_normals, qVec, pVec, dVec);
-	if (isLeaf){return; }
-	vector<float> wVec(pVec.size());
 	for (int i=0; i<pVec.size(); i++) {
-		wVec[i] = calculateWiX(pVec[i]);
+		wVec.push_back(calculateWiX(pVec[i]));
 	}
+
+	if (isLeaf){return; }
+
 	LossFunction F(this->Q, qVec, pVec, dVec, wVec);
 
 	VectorXf X = F.optimizeQ();
