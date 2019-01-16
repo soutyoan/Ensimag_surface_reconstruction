@@ -98,48 +98,22 @@ VectorXf LossFunction::e_x(const vec3& x)
 
 void LossFunction::initM(MatrixXf& M)
 {
-    vector<VectorXf> _ep;
-    vector<VectorXf> _eq;
-    for (int i=0; i<pVec.size(); i++) {
-        _ep.push_back(e_x(pVec[i]));
-    }
-    for (int i=0; i<qVec.size(); i++) {
-        _eq.push_back(e_x(qVec[i]));
+    for (int p=0; p<pVec.size(); p++) {
+        VectorXf ep = e_x(pVec[p]);
+        M += wVec[p] * (ep * ep.transpose());
     }
 
-    for (int k=0; k<13; k++) {
-
-        for (int l=0; l<13; l++) {
-            float val1=0.0;
-            float val2=0.0;
-
-            for (int p=0; p<pVec.size(); p++) {
-                val1 += wVec[p] * _ep[p][k] * _ep[p][l];
-            }
-
-            for (int q=0; q<qVec.size(); q++) {
-                val2 += _eq[q][k] * _eq[q][l];
-            }
-
-            M(k,l) = 2/W * val1 + 2/m * val2;
-        }
+    for (int q=0; q<qVec.size(); q++) {
+        VectorXf eq = e_x(qVec[q]);
+        M += eq* eq.transpose();
     }
 }
 
 void LossFunction::initY(VectorXf& y)
 {
-    vector<VectorXf> _eq;
-
-    for (int i=0; i<qVec.size(); i++) {
-        _eq.push_back(e_x(qVec[i]));
-    }
-
-    for (int k=0; k<13; k++) {
-        float val=0.0;
-        for (int q=0; q<qVec.size(); q++) {
-            val += dVec[q] * _eq[q][k];
-        }
-        y[k] = val;
+    for (int q=0; q<qVec.size(); q++) {
+        VectorXf eq = e_x(qVec[q]);
+        y += dVec[q] * eq;
     }
 }
 
