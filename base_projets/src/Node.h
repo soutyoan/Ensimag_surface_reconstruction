@@ -28,12 +28,11 @@ private:
     float epsi; // Epsilon i
     bool isLeaf;
     vector<int> indices;
+    bool isInitialized; 
 
 public:
 
     vector<Node> childs; // Childs of this node
-
-    bool _isLeaf(){return isLeaf;}
 
     LocalShapeFunction Q;
 

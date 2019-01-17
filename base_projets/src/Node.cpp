@@ -19,20 +19,18 @@ float normVec(vector<float> vec) {
 }
 
 Node::Node(){
-	isLeaf = false;
 	epsi = 0;
 }
 
 // PARENT CONSTRUCTOR strange before c++11, must do it like this sorry
 Node::Node(Box b){
 	epsi = 0;
-	isLeaf = false;
 	this->b = b;
 }
 
 Node::Node(const Node& n){
-	this->epsi = n.epsi;
-	this->isLeaf = false;
+    epsi = 0;     
+    this->epsi = n.epsi;
 	this->childs = vector<Node>(n.childs);
 	this->indices = vector<int>(n.indices);
 	this->b = n.b;
@@ -46,11 +44,6 @@ void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_norm
 
 	vector<int> return_indices(6);
 	bool flag;
-
-	if (indices.size() == 0){
-		isLeaf = true;
-		return;
-	}
 
 	// We need at least 6 points in the list of indices.
 	// We add them all in the p list
@@ -129,7 +122,6 @@ vec3 Node::getRemainingQpoints(vector<vec3> &m_vertices, vector<vec3> &m_normals
 	for (int i = 0; i < 9; i++){
 		vec3 q = getQpoint(i);
 		getClosestPointsInBall(m_vertices, m_normals, q, p, n);
-		if (isLeaf){return vec3(0); }
 		bool signPositive = dot(n[0], (q - p[0])) > 0;
 		bool addQ = true;
 		for (int j = 0; j < 6; j++){
@@ -161,7 +153,6 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 	vector<vec3> pVec;
 	vector<float> dVec;
 	getRemainingQpoints(m_vertices, m_normals, qVec, pVec, dVec);
-	if (isLeaf){return; }
 	vector<float> wVec(pVec.size());
 	for (int i=0; i<pVec.size(); i++) {
 		wVec[i] = calculateWiX(pVec[i]);
@@ -171,7 +162,7 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 	VectorXf X = F.optimizeQ();
 
 	Q.updateQ(X);
-
+    Q.setInitialized(); 
 }
 
 float Node::calculateQ(vec3 x){
@@ -244,14 +235,11 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 	float Ri = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
 	vec3 ci(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
 	if ((norm(x, ci) > Ri) || (indices.size() < 15)) {
-		return SGlobal;
+		//cout << "STOP " << norm(x, ci) << " " << Ri << endl; 
+        return SGlobal;
 	}
     if (!Q.isInitialized()){ // La fonction n'est pas encore créée
         createQ(m_vertices, m_normals);
-		if (isLeaf){
-			// cout << "IS LEAF\n";
-			return vec2(0, 0);
-		}
 		epsi = 0;
 		for (int i = 0; i < indices.size(); i++){
 			float current = abs(Q.calculate(m_vertices[indices[i]])/norm(Q.evalGradient(m_vertices[indices[i]]), vec3(0)));
@@ -259,12 +247,12 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 		}
 
     }
-	// cout << "epsi " << epsi << endl;
+  	// cout << "epsi " << epsi << endl;
     // Le nouveau epsilon a été calculé
     if (epsi > eps0){
 		bool oneValidChild = false;
         if (childs.size() == 0){
-			// cout << "creating childs\n";
+//		    cout << "creating childs\n";
             createChilds(m_vertices);
         }
         for (int i = 0; i < childs.size(); i++){ // iterere sur les enfants
@@ -275,21 +263,25 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
             SGlobal[1] += S[1];
 			// cout << "global " << SGlobal[0] << " " << SGlobal[1] << endl;
         }
-		if (oneValidChild){
+        return SGlobal; 
+		/*if (oneValidChild){
 			return SGlobal;
-		}
+		}*/
     }
-    isLeaf = true;
 	float wix = this->calculateWiX(x);
 	// cerr << "WIX  XXXXXXXXXXXXXXXXXXXXX" << wix << endl;
 	// cerr << Ri << " " << norm(x, ci) << endl;
     SGlobal[0] += wix * calculateQ(x);
     SGlobal[1] += wix;
-	// cout << "ici " << SGlobal[0] << " " << SGlobal[1] << endl;
+    //cout << endl  << "QQQQQQQQQQQQQQ " <<  calculateQ(x) << " " << wix << endl;
     return SGlobal;
 }
 
 void Node::initializeAsRoot(int sizeVertices){
+	if (indices.size() > 0){
+		return; 
+	}
+	isInitialized = true; 
 	indices.resize(sizeVertices);
 	for (int i = 0; i < sizeVertices; i++){
 		indices[i] = i;

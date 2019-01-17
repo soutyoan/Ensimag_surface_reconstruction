@@ -16,7 +16,7 @@ public:
     static void ProcessTetrahedron(Mesh& mesh, const vector<vec3> gradients, const float MPU_values[], const glm::vec3 p[]);
 
     Node root;
-    float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0, Box broot);
+    float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0);
 
     void clearIndicesAndVertices();
 

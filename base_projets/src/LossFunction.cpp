@@ -16,11 +16,6 @@ LossFunction::LossFunction(LocalShapeFunction& _Q, const vector<vec3>& _qVec, co
     this->qVec = vector<vec3>(_qVec);
     this->dVec = vector<float>(_dVec);
     this->wVec = vector<float>(_wVec);
-    this->W = 0.0;
-    this->m = _qVec.size();
-    for (int i=0; i<_wVec.size(); i++) {
-        this->W += _wVec[i];
-    }
 }
 
 
@@ -84,46 +79,21 @@ float LossFunction::operator()(const VectorXf& X, VectorXf& gradfX) {
     return res;
 }
 
-/**
- * Computation of 13 size vector (x1^2, ..., 1)
- * @param  x input 13 size vector
- * @return   e_x
- */
-VectorXf LossFunction::e_x(const vec3& x)
-{
-    VectorXf res(13);
-    res << pow(x[0], 2), x[0]*x[1], x[0]*x[2], x[1]*x[0], pow(x[1], 2), x[1]*x[2], x[2]*x[0], x[2]*x[1], pow(x[2], 2), x[0], x[1], x[2], 1;
-    return res;
-}
-
-void LossFunction::initM(MatrixXf& M)
-{
-    for (int p=0; p<pVec.size(); p++) {
-        VectorXf ep = e_x(pVec[p]);
-        M += wVec[p] * (ep * ep.transpose());
-    }
-
-    for (int q=0; q<qVec.size(); q++) {
-        VectorXf eq = e_x(qVec[q]);
-        M += eq* eq.transpose();
-    }
-}
-
-void LossFunction::initY(VectorXf& y)
-{
-    for (int q=0; q<qVec.size(); q++) {
-        VectorXf eq = e_x(qVec[q]);
-        y += dVec[q] * eq;
-    }
-}
-
 VectorXf LossFunction::optimizeQ() {
+    LBFGSParam<float> param;
+    param.epsilon = eps;
+    param.max_iterations = ITE_MAX;
 
-    MatrixXf M(13, 13);
-    VectorXf y(13);
-    initM(M); initY(y);
-    VectorXf x(13);
+    LBFGSSolver<float> solver(param);
 
-    x = M.colPivHouseholderQr().solve(y);
-    return x;
+    VectorXf X(13);
+    for (int i = 0; i< 13; i++){
+        X[i] = i;
+    }
+
+    float _val;
+    int niter = solver.minimize(*this, X, _val);
+    // cerr << "iter " << niter << endl;
+
+    return X;
 }
