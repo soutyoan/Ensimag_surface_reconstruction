@@ -35,8 +35,8 @@ int main()
     //-------------------------------------------------
     // Data arrays Initialization
 
-    // Mesh creation
-    // Mesh m("../models/triceratops.off");
+    //Mesh creation
+    // Mesh_Reconstruction m("../models/triceratops.off");
 
     BarthFunction bf;
     float x = 1.8;
@@ -44,20 +44,20 @@ int main()
     m.CreateSphere(m, 500, 500);
     // m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
 
-    // m.Normalize();
-    // m.ComputeNormals();
-    // m.ColorFromNormals();
+    //m.Normalize();
+    //m.ComputeNormals();
+    //m.ColorFromNormals();
 
     cout << "size vertices " << m.getVerticesSize() << endl;
     cout << "size indices " << m.getIndicesSize() << endl;
     cout << "size normals" << m.getNormalsSize() << endl;
 
-    m.GetVertices(7, m, 0.1); 
+    m.GetVertices(50, m, 0.2); 
 
     cout << "size vertices " << m.getVerticesSize() << endl;
     cout << "size indices " << m.getIndicesSize() << endl;
 
-    // m.RemoveDouble(0.5);
+    //m.RemoveDouble(0.001);
     m.Normalize();
     m.ComputeNormals();
     m.ColorFromNormals();

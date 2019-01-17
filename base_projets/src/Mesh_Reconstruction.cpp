@@ -45,7 +45,7 @@ float Mesh_Reconstruction::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0
 	// cout << "test " << SwqSw[1] << " " <<SwqSw[0] << " 0" << endl;
 
 	if ((SwqSw[0] == 0) || (std::isinf(SwqSw[0])) || (std::isinf(SwqSw[1]))){
-		cout << "d0"; 
+		//cout << "d0"; 
 		return 0;
 	}
 
@@ -115,15 +115,17 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 				// cout << "value " << MPUValues[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] << endl;
 				if (MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] > 0){
 					cout << "+ ";
+                    // MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] = 1; 
 				} else if (MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] < 0) {
 					cout << "- ";
+                    // MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] = -1; 
 				} else {
-					cout << " ";
+					cout << "  ";
 					totalZeros ++;
 				}
 				k ++;
 			}
-			cout << endl;
+			cout << "|" << endl;
 			j++;
 		}
 		cout << endl;
