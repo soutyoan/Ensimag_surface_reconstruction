@@ -247,7 +247,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 		}
 
     }
-//	cout << "epsi " << epsi << endl;
+  	cout << "epsi " << epsi << endl;
     // Le nouveau epsilon a été calculé
     if (epsi > eps0){
 		bool oneValidChild = false;
@@ -272,7 +272,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 	// cerr << Ri << " " << norm(x, ci) << endl;
     SGlobal[0] += wix * calculateQ(x);
     SGlobal[1] += wix;
-//	cout << "ici " << SGlobal[0] << " " << SGlobal[1] << endl;
+    cout << endl  << "QQQQQQQQQQQQQQ " <<  calculateQ(x) << " " << wix << endl;
     return SGlobal;
 }
 

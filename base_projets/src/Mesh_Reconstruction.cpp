@@ -45,7 +45,7 @@ float Mesh_Reconstruction::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0
 	// cout << "test " << SwqSw[1] << " " <<SwqSw[0] << " 0" << endl;
 
 	if ((SwqSw[0] == 0) || (std::isinf(SwqSw[0])) || (std::isinf(SwqSw[1]))){
-		// cout << "test " << SwqSw[1] << " " <<SwqSw[0] << " 0" << endl;
+		cout << "d0"; 
 		return 0;
 	}
 
