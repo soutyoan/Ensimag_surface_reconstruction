@@ -105,7 +105,7 @@ void LossFunction::initM(MatrixXf& M)
         VectorXf ep = e_x(pVec[p]);
         MatrixXf _aux(13,13);
         _aux = ep*ep.transpose();
-        M1 += wVec[p]*_aux;
+        M1 += _aux;
     }
 
     for (int q=0; q<qVec.size(); q++) {
