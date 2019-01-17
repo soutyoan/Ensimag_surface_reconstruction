@@ -14,7 +14,7 @@ public:
     static void ProcessCube(Mesh& mesh, const vector<vec3> gradients, vector<float> MPU_Values, const vector<vec3> points);
 
     /// Processes a tetrahedron during marching tetrahedron algorithm
-    static void ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vec3 p[]);
+    static void ProcessTetrahedronR(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vec3 p[]);
 
     Node root;
     float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0);

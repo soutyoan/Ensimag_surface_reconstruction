@@ -147,7 +147,7 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 	vec3 points_arr[points.size()];
 	copy(points.begin(), points.end(), points_arr);
 
-	mesh.ProcessTetrahedron(mesh, f, 0, points_arr); 
+	mesh.ProcessTetrahedronR(mesh, f, 0, points_arr); 
 }
 
 vec3 findRoot(const ImplicitFunction& function, const float isoValue, const vec3& p0, const vec3& p1, unsigned nb_iter = 10)
@@ -168,7 +168,7 @@ vec3 findRoot(const ImplicitFunction& function, const float isoValue, const vec3
     return p;
 }
 
-void Mesh::ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vec3 p[])
+void Mesh_Reconstruction::ProcessTetrahedronR(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vec3 p[])
 {
     bool b[4] = {function.Eval(p[0]) > isoValue, function.Eval(p[1]) > isoValue, function.Eval(p[2]) > isoValue, function.Eval(p[3]) > isoValue};
 
