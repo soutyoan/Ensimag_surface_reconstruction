@@ -1,6 +1,0 @@
-/user/2/klopptoa/Documents/3A/Modelisation_surfacique/Ensimag_surface_reconstruction/base_projets/bin/external/CMakeFiles/GLEW_190.dir
-/user/2/klopptoa/Documents/3A/Modelisation_surfacique/Ensimag_surface_reconstruction/base_projets/bin/external/CMakeFiles/GLFW_276.dir
-/user/2/klopptoa/Documents/3A/Modelisation_surfacique/Ensimag_surface_reconstruction/base_projets/bin/CMakeFiles/lib_reconstruction.dir
-/user/2/klopptoa/Documents/3A/Modelisation_surfacique/Ensimag_surface_reconstruction/base_projets/bin/test/CMakeFiles/plan_f.dir
-/user/2/klopptoa/Documents/3A/Modelisation_surfacique/Ensimag_surface_reconstruction/base_projets/bin/release/CMakeFiles/projet.dir
-/user/2/klopptoa/Documents/3A/Modelisation_surfacique/Ensimag_surface_reconstruction/base_projets/bin/test/CMakeFiles/test_no_graphic.dir
