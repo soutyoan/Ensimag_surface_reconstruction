@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC  -g -g   -shared -Wl,-soname,libplan_f.so -o libplan_f.so CMakeFiles/plan_f.dir/Implicit_plan_function.cpp.o 

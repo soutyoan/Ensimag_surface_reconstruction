@@ -41,7 +41,7 @@ int main()
     BarthFunction bf;
     float x = 1.8;
     Mesh_Reconstruction m;
-    m.CreateSphere(m, 200, 200);
+    m.CreateSphere(m, 500, 500);
     // m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
 
     // m.Normalize();

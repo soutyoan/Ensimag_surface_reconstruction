@@ -1,0 +1,1 @@
+/usr/bin/c++    -g -g    CMakeFiles/test_no_graphic.dir/test_no_graphic.cpp.o  -o test_no_graphic -rdynamic ../liblib_reconstruction.so ../external/libGLFW_276.a ../external/libGLEW_190.a -lGLU -lGL -lSM -lICE -lX11 -lXext -lGL -lGLU -lXrandr -lXext -lX11 -lrt -ldl -Wl,-rpath,/user/2/klopptoa/Documents/3A/Modelisation_surfacique/Ensimag_surface_reconstruction/base_projets/bin 

@@ -161,7 +161,7 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 	VectorXf X = F.optimizeQ();
 
 	Q.updateQ(X);
-
+    Q.setInitialized(); 
 }
 
 float Node::calculateQ(vec3 x){
@@ -234,7 +234,8 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 	float Ri = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
 	vec3 ci(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
 	if ((norm(x, ci) > Ri) || (indices.size() < 15)) {
-		return SGlobal;
+		//cout << "STOP " << norm(x, ci) << " " << Ri << endl; 
+        return SGlobal;
 	}
     if (!Q.isInitialized()){ // La fonction n'est pas encore créée
         createQ(m_vertices, m_normals);
@@ -245,12 +246,12 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 		}
 
     }
-	// cout << "epsi " << epsi << endl;
+//	cout << "epsi " << epsi << endl;
     // Le nouveau epsilon a été calculé
     if (epsi > eps0){
 		bool oneValidChild = false;
         if (childs.size() == 0){
-			// cout << "creating childs\n";
+			cout << "creating childs\n";
             createChilds(m_vertices);
         }
         for (int i = 0; i < childs.size(); i++){ // iterere sur les enfants
@@ -270,12 +271,12 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 	// cerr << Ri << " " << norm(x, ci) << endl;
     SGlobal[0] += wix * calculateQ(x);
     SGlobal[1] += wix;
-	// cout << "ici " << SGlobal[0] << " " << SGlobal[1] << endl;
+//	cout << "ici " << SGlobal[0] << " " << SGlobal[1] << endl;
     return SGlobal;
 }
 
 void Node::initializeAsRoot(int sizeVertices){
-	if (isInitialized){
+	if (indices.size() > 0){
 		return; 
 	}
 	isInitialized = true; 
