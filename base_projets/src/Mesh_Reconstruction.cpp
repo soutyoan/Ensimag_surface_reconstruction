@@ -150,7 +150,7 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 	mesh.ProcessTetrahedronR(mesh, f, 0, points_arr); 
 }
 
-vec3 findRoot(const ImplicitFunction& function, const float isoValue, const vec3& p0, const vec3& p1, unsigned nb_iter = 10)
+vec3 findRootR(const ImplicitFunction& function, const float isoValue, const vec3& p0, const vec3& p1, unsigned nb_iter = 10)
 {
     vec3 p00 = p0;
     vec3 p10 = p1;
@@ -183,9 +183,9 @@ void Mesh_Reconstruction::ProcessTetrahedronR(Mesh& mesh, const ImplicitFunction
         if(b[i] && !b[(i+1)%4] && !b[(i+2)%4] && !b[(i+3)%4] || !b[i] && b[(i+1)%4] && b[(i+2)%4] && b[(i+3)%4])
         {
 
-            vec3 p0 = findRoot(function, isoValue, p[i], p[(i+1)%4]);
-            vec3 p1 = findRoot(function, isoValue, p[i], p[(i+2)%4]);
-            vec3 p2 = findRoot(function, isoValue, p[i], p[(i+3)%4]);
+            vec3 p0 = findRootR(function, isoValue, p[i], p[(i+1)%4]);
+            vec3 p1 = findRootR(function, isoValue, p[i], p[(i+2)%4]);
+            vec3 p2 = findRootR(function, isoValue, p[i], p[(i+3)%4]);
 
 
             vec3 n0 = glm::normalize(-function.EvalDev(p0));
@@ -248,10 +248,10 @@ void Mesh_Reconstruction::ProcessTetrahedronR(Mesh& mesh, const ImplicitFunction
 
             if(b[i] && b[j] && !b[k] && !b[l] || !b[i] && !b[j] && b[k] && b[l])
             {
-                vec3 p0 = findRoot(function, isoValue, p[i], p[k]);
-                vec3 p1 = findRoot(function, isoValue, p[i], p[l]);
-                vec3 p2 = findRoot(function, isoValue, p[j], p[k]);
-                vec3 p3 = findRoot(function, isoValue, p[j], p[l]);
+                vec3 p0 = findRootR(function, isoValue, p[i], p[k]);
+                vec3 p1 = findRootR(function, isoValue, p[i], p[l]);
+                vec3 p2 = findRootR(function, isoValue, p[j], p[k]);
+                vec3 p3 = findRootR(function, isoValue, p[j], p[l]);
 
                 vec3 n0 = glm::normalize(-function.EvalDev(p0));
                 vec3 n1 = glm::normalize(-function.EvalDev(p1));
