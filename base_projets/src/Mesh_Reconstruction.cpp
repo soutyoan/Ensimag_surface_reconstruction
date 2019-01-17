@@ -29,13 +29,11 @@ void Mesh_Reconstruction::ProcessCube(Mesh& mesh, const vector<vec3> gradients, 
 }
 
 // MPU approximation
-float Mesh_Reconstruction::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0, Box broot){
+float Mesh_Reconstruction::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0){
 
 	// First we need to recreate the root node.
 	// cout << "Box parent" << broot << endl;
 
-	root = Node(); // Reinitialize the root everytime
-	root.b = broot;
 	root.initializeAsRoot(mesh.m_positions.size());
 
 	vec2 SwqSw = root.MPUapprox(x, eps0, mesh.m_positions, mesh.m_normals);
@@ -100,6 +98,8 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 	int i = 0; int j = 0; int k = 0;
 	int totalZeros = 0;
 
+	root.b = space;
+
 	// Construction of the space
 	for (float x = space.x - 2 * (space.lx/sampling); x <= space.x + space.lx + 2 * (space.lx/sampling); x+= space.lx/sampling){
 		// cout << "Tree creation i" << i << " out of " << sampling << endl;
@@ -111,7 +111,7 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 			for (float z = space.z - 2 * (space.lz/sampling); z <= space.z + space.lz + 2 * (space.lz/sampling); z+= space.lz/sampling){
 				// cout << "Tree creation k " << k << " out of " << sampling << endl;
 				MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] =
-					evaluateMPUapprox(mesh, vec3(x, y, z), eps0, space);
+					evaluateMPUapprox(mesh, vec3(x, y, z), eps0);
 				// cout << "value " << MPUValues[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] << endl;
 				if (MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] > 0){
 					cout << "+ ";
