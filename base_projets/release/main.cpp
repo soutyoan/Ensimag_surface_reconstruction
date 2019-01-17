@@ -139,8 +139,8 @@ int main()
     BarthFunction bf;
     float x = 1.8;
     Mesh_Reconstruction m;
-    // m.CreateSphere(m, 50, 50);
-    m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
+    m.CreateSphere(m, 50, 50);
+    // m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
 
     // m.Normalize();
     // m.ComputeNormals();

@@ -5,12 +5,15 @@
 #include "LocalShapeFunction.h"
 #include <LBFGS.h>
 #include <Eigen/Core>
+#include <Eigen/Dense>
 
 using namespace std;
 using namespace glm;
 using namespace LBFGSpp;
-using Eigen::VectorXf;
-
+using namespace Eigen;
+// using Eigen::VectorXf;
+// using Eigen::MatrixXf;
+// using Eigen::ColPivHouseholderQR;
 
 class LossFunction {
 
@@ -27,7 +30,17 @@ public:
 
     float operator()(const VectorXf& X, VectorXf& gradfX);
 
+    VectorXf e_x(const vec3& x);
+
+    void initY(VectorXf& y);
+
+    void initM(MatrixXf& M);
+
     VectorXf optimizeQ();
+
+private:
+    float W;
+    float m;
 
 };
 
