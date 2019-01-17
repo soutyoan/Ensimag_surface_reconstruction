@@ -133,12 +133,29 @@ void LossFunction::initY(VectorXf& y)
 
 VectorXf LossFunction::optimizeQ() {
 
+    LBFGSParam<float> param;
+    param.epsilon = eps;
+    param.max_iterations = ITE_MAX;
+
+    LBFGSSolver<float> solver(param);
+
+    VectorXf X(13);
+    for (int i = 0; i< 13; i++){
+        X[i] = i;
+    }
+
+    float _val;
+    int niter = solver.minimize(*this, X, _val);
+    // cerr << "iter " << niter << endl;
+    cout <<"solution grad "<<endl<<X<<endl;
+    return X;
+
     MatrixXf M(13, 13);
     VectorXf y(13);
     initM(M); initY(y);
     VectorXf x(13);
 
     x = M.colPivHouseholderQr().solve(y);
-    // cout << "solution founded " << x << endl;
+    cout << "solution founded " << endl << x << endl;
     return x;
 }
