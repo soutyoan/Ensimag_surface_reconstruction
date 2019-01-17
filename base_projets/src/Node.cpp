@@ -29,7 +29,8 @@ Node::Node(Box b){
 }
 
 Node::Node(const Node& n){
-	this->epsi = n.epsi;
+    epsi = 0;     
+    this->epsi = n.epsi;
 	this->childs = vector<Node>(n.childs);
 	this->indices = vector<int>(n.indices);
 	this->b = n.b;
@@ -251,7 +252,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
     if (epsi > eps0){
 		bool oneValidChild = false;
         if (childs.size() == 0){
-			cout << "creating childs\n";
+//		    cout << "creating childs\n";
             createChilds(m_vertices);
         }
         for (int i = 0; i < childs.size(); i++){ // iterere sur les enfants
