@@ -4,22 +4,21 @@
 int main()
 {
     vector<vec3> pVec;
-    pVec.push_back(vec3(1, 0, -653));
-    pVec.push_back(vec3(0, 1, 0));
-    pVec.push_back(vec3(0, 0, 1));
-    vector<vec3> qVec = vector<vec3>(pVec);
+    vector<vec3> qVec;
     vector<float> dVec;
-    dVec.push_back(1.0);
-    dVec.push_back(1.0);
-    dVec.push_back(1.0);
-    vector<float> wVec = vector<float>(dVec);
+    vector<float> wVec;
+    for (int i=0; i<3; i++) {
+        vec3 p = vec3(rand()%10, rand()%10, rand()%10);
+        vec3 q = vec3(rand()%10, rand()%10, rand()%10);
+        pVec.push_back(p);
+        qVec.push_back(q);
+        dVec.push_back(rand()%5);
+        wVec.push_back(rand()%5);
+    }
     LocalShapeFunction Q;
     LossFunction g(Q, pVec, qVec, dVec, wVec);
     VectorXf sol = g.optimizeQ();
     Q.updateQ(sol);
-    cout << "value " << Q.Eval(vec3(1, 0, 0))<<endl;
-    cout << "value " << Q.Eval(vec3(0, 1, 0))<<endl;
-    cout << "value " << Q.Eval(vec3(0, 0, 1))<<endl;
-    cout << "value " << Q.Eval(vec3(1, 1, 1))<<endl;
+    cout << rand()%2 << endl;
     return EXIT_SUCCESS;
 }

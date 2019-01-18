@@ -105,6 +105,7 @@ void LossFunction::initM(MatrixXf& M)
         VectorXf ep = e_x(pVec[p]);
         MatrixXf _aux(13,13);
         _aux = ep*ep.transpose();
+        _aux *= wVec[p];
         M1 += _aux;
     }
 
@@ -133,29 +134,31 @@ void LossFunction::initY(VectorXf& y)
 
 VectorXf LossFunction::optimizeQ() {
 
-    LBFGSParam<float> param;
-    param.epsilon = eps;
-    param.max_iterations = ITE_MAX;
-
-    LBFGSSolver<float> solver(param);
-
-    VectorXf X(13);
-    for (int i = 0; i< 13; i++){
-        X[i] = i;
-    }
-
-    float _val;
-    int niter = solver.minimize(*this, X, _val);
-    // cerr << "iter " << niter << endl;
-    cout <<"solution grad "<<endl<<X<<endl;
-    return X;
+    // LBFGSParam<float> param;
+    // param.epsilon = eps;
+    // param.max_iterations = ITE_MAX;
+    //
+    // LBFGSSolver<float> solver(param);
+    //
+    // VectorXf X(13);
+    // for (int i = 0; i< 13; i++){
+    //     X[i] = i;
+    // }
+    //
+    // float _val;
+    // int niter = solver.minimize(*this, X, _val);
+    // // cerr << "iter " << niter << endl;
+    // cout <<"solution grad "<<endl<<X<<endl;
+    // return X;
 
     MatrixXf M(13, 13);
     VectorXf y(13);
     initM(M); initY(y);
+    cout << M << endl;
+    cout << "det " << M.determinant() << endl;
     VectorXf x(13);
 
-    x = M.colPivHouseholderQr().solve(y);
+    x = M.fullPivLu().solve(y);
     cout << "solution founded " << endl << x << endl;
     return x;
 }
