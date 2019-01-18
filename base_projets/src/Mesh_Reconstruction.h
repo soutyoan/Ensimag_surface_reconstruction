@@ -10,13 +10,13 @@ public:
     Mesh_Reconstruction() : Mesh(){};
     Mesh_Reconstruction(const char* filename) : Mesh(filename){}
 
-    static void ProcessCube(Mesh& mesh, const ImplicitFunction& function, vector<float> MPU_Values, const vector<vec3> points);
+    static void ProcessCube(Mesh& mesh, const vector<vec3> gradients, vector<float> MPU_Values, const vector<vec3> points);
 
     /// Processes a tetrahedron during marching tetrahedron algorithm
-    static void ProcessTetrahedron(Mesh& mesh, const ImplicitFunction& function, const float MPU_values[], const glm::vec3 p[]);
+    static void ProcessTetrahedron(Mesh& mesh, const vector<vec3> gradients, const float MPU_values[], const glm::vec3 p[]);
 
     Node root;
-    float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0, Box broot);
+    float evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0);
 
     void clearIndicesAndVertices();
 

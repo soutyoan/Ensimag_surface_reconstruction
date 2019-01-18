@@ -66,7 +66,7 @@ public:
 
 
     bool isInitialized(){return initialized;}
-
+    void setInitialized(){initialized = true; }
     /*
     Initialize the function
     */

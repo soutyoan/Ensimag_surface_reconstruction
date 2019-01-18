@@ -35,30 +35,15 @@ int main()
     //-------------------------------------------------
     // Data arrays Initialization
 
-    //Mesh creation
-    // Mesh_Reconstruction m("../models/triceratops.off");
+    // Mesh creation
+    // Mesh m("../models/triceratops.off");
 
     BarthFunction bf;
     float x = 1.8;
     Mesh_Reconstruction m;
-    m.CreateSphere(m, 300, 300);
-    // m.CreateCube2(m);
-    // m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
+    m.CreateSphere(m, 500, 500);
 
-    //m.Normalize();
-    //m.ComputeNormals();
-    //m.ColorFromNormals();
-
-    cout << "size vertices " << m.getVerticesSize() << endl;
-    cout << "size indices " << m.getIndicesSize() << endl;
-    cout << "size normals" << m.getNormalsSize() << endl;
-
-    m.GetVertices(80, m, 0.1);
-
-    cout << "size vertices " << m.getVerticesSize() << endl;
-    cout << "size indices " << m.getIndicesSize() << endl;
-
-    m.RemoveDouble(0.001);
+    // m.RemoveDouble(0.5);
     m.Normalize();
     m.ComputeNormals();
     m.ColorFromNormals();
@@ -66,7 +51,7 @@ int main()
     if (OUTPUT){
         // Output to folder
         mkdir("../output", 0777);
-        m.write_obj("../output/output.obj");
+        m.write_obj("../output/sphere.obj");
     }
 
     // Half edge conversion
