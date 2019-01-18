@@ -29,7 +29,7 @@ Node::Node(Box b){
 }
 
 Node::Node(const Node& n){
-    epsi = 0;     
+    epsi = 0;
     this->epsi = n.epsi;
 	this->childs = vector<Node>(n.childs);
 	this->indices = vector<int>(n.indices);
@@ -162,7 +162,7 @@ void Node::createQ(vector<vec3> &m_vertices, vector<vec3> &m_normals){
 	VectorXf X = F.optimizeQ();
 
 	Q.updateQ(X);
-    Q.setInitialized(); 
+    Q.setInitialized();
 }
 
 float Node::calculateQ(vec3 x){
@@ -235,7 +235,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
 	float Ri = sqrt(pow(b.lx/2, 2) + pow(b.ly/2, 2) + pow(b.lz/2, 2));
 	vec3 ci(b.x + b.lx/2, b.y + b.ly/2, b.z + b.lz/2);
 	if ((norm(x, ci) > Ri) || (indices.size() < 15)) {
-		//cout << "STOP " << norm(x, ci) << " " << Ri << endl; 
+		//cout << "STOP " << norm(x, ci) << " " << Ri << endl;
         return SGlobal;
 	}
     if (!Q.isInitialized()){ // La fonction n'est pas encore créée
@@ -249,7 +249,7 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
     }
   	// cout << "epsi " << epsi << endl;
     // Le nouveau epsilon a été calculé
-    if (epsi > eps0){
+    if ((epsi > eps0) && (indices.size() > 60)){
 		bool oneValidChild = false;
         if (childs.size() == 0){
 //		    cout << "creating childs\n";
@@ -263,25 +263,25 @@ vec2 Node::MPUapprox(vec3 x, float eps0, vector<vec3> &m_vertices, vector<vec3> 
             SGlobal[1] += S[1];
 			// cout << "global " << SGlobal[0] << " " << SGlobal[1] << endl;
         }
-        return SGlobal; 
-		/*if (oneValidChild){
+		if (oneValidChild || (indices.size() < 60)){
 			return SGlobal;
-		}*/
-    }
-	float wix = this->calculateWiX(x);
-	// cerr << "WIX  XXXXXXXXXXXXXXXXXXXXX" << wix << endl;
-	// cerr << Ri << " " << norm(x, ci) << endl;
-    SGlobal[0] += wix * calculateQ(x);
-    SGlobal[1] += wix;
-    //cout << endl  << "QQQQQQQQQQQQQQ " <<  calculateQ(x) << " " << wix << endl;
-    return SGlobal;
+		}
+    } else {
+		float wix = this->calculateWiX(x);
+		// cerr << "WIX  XXXXXXXXXXXXXXXXXXXXX" << wix << endl;
+		// cerr << Ri << " " << norm(x, ci) << endl;
+	    SGlobal[0] += wix * calculateQ(x);
+	    SGlobal[1] += wix;
+	    //cout << endl  << "QQQQQQQQQQQQQQ " <<  calculateQ(x) << " " << wix << endl;
+	    return SGlobal;
+	}
 }
 
 void Node::initializeAsRoot(int sizeVertices){
 	if (indices.size() > 0){
-		return; 
+		return;
 	}
-	isInitialized = true; 
+	isInitialized = true;
 	indices.resize(sizeVertices);
 	for (int i = 0; i < sizeVertices; i++){
 		indices[i] = i;
