@@ -27,10 +27,11 @@ class Node{
 private:
     float epsi; // Epsilon i
     bool isLeaf;
-    vector<int> indices;
     bool isInitialized; 
 
 public:
+
+    vector<int> indices;
 
     vector<Node> childs; // Childs of this node
 

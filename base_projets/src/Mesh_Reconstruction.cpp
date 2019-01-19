@@ -20,12 +20,12 @@ void Mesh_Reconstruction::ProcessCube(Mesh& mesh, const vector<vec3> gradients, 
 	float v5[4] =  {MPU_values[0], MPU_values[5], MPU_values[1], MPU_values[7]};
 
 
-	ProcessTetrahedron(mesh, gradients, v0, p0);
-	ProcessTetrahedron(mesh, gradients, v1, p1);
-	ProcessTetrahedron(mesh, gradients, v2, p2);
-	ProcessTetrahedron(mesh, gradients, v3, p3);
-	ProcessTetrahedron(mesh, gradients, v4, p4);
-	ProcessTetrahedron(mesh, gradients, v5, p5);
+	// ProcessTetrahedron(mesh, gradients, v0, p0);
+	// ProcessTetrahedron(mesh, gradients, v1, p1);
+	// ProcessTetrahedron(mesh, gradients, v2, p2);
+	// ProcessTetrahedron(mesh, gradients, v3, p3);
+	// ProcessTetrahedron(mesh, gradients, v4, p4);
+	// ProcessTetrahedron(mesh, gradients, v5, p5);
 }
 
 // MPU approximation
@@ -138,7 +138,7 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 
 	// We destroy the indices and the vertices of m
 	mesh.clearIndicesAndVertices();
-
+  
 	int res = 1;
 
 	for (int i = 0; i < sampling + 2 * addBoundingBox - res; i+=res){
@@ -181,37 +181,27 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 	}
 }
 
-vec3 findRoot(const float v0, const float v1, const vec3& p0, const vec3& p1, unsigned nb_iter = 10)
+vec3 findRootR(const ImplicitFunction& function, const float isoValue, const vec3& p0, const vec3& p1, unsigned nb_iter = 10)
 {
-    vec3 p00;
-    vec3 p10;
+    vec3 p00 = p0;
+    vec3 p10 = p1;
+    if(function.Eval(p0) > function.Eval(p1))
+    {
+        swap(p00, p10);
+    }
 
-	if (v1 < v0){
-		p00 = p1;
-		p10 = p0;
-	} else {
-		p00 = p0;
-		p10 = p1;
-	}
+	float evalp0 = function.Eval(p0); 
+	float evalp1 = function.Eval(p1); 
 
-	if (v0 == 0){
-		return p00;
-	}
-
-	float total = abs(v0) + abs(v1);
-    vec3 p = p0 + (abs(v0)/total) * (p1 - p0);
-
-	// cout << "values " << v0 << " " << v1 << " " << total << endl;
-	// cout << "p1 " << p1[0] << " " << p1[1] << " " << p1[2] << endl;
-	// cout << "p0 " << p0[0] << " " << p0[1] << " " << p0[2] << endl;
-	// cout << "p " << p[0] << " " << p[1] << " " << p[2] << endl;
+	float total = abs(evalp0) + abs(evalp1);
+    vec3 p = p0 + (abs(evalp0)/total) * (p1 - p0);
 
     return p;
 }
 
-void Mesh_Reconstruction::ProcessTetrahedron(Mesh& mesh, const vector<vec3> gradients, const float MPU_values[], const vec3 p[])
+void Mesh_Reconstruction::ProcessTetrahedronR(Mesh& mesh, const ImplicitFunction& function, const float isoValue, const vec3 p[])
 {
-    bool b[4] = {MPU_values[0] > 0, MPU_values[1] > 0, MPU_values[2] > 0, MPU_values[3] > 0};
+    bool b[4] = {function.Eval(p[0]) > isoValue, function.Eval(p[1]) > isoValue, function.Eval(p[2]) > isoValue, function.Eval(p[3]) > isoValue};
 
     unsigned int N = mesh.m_positions.size();
     if((!b[0] && !b[1] && !b[2] && !b[3]) || (b[0] && b[1] && b[2] && b[3]))
@@ -221,20 +211,18 @@ void Mesh_Reconstruction::ProcessTetrahedron(Mesh& mesh, const vector<vec3> grad
 
     for(unsigned int i=0; i<4; i++)
     {
-        if(((MPU_values[i] > 0) && (MPU_values[(i+1)%4] < 0) && (MPU_values[(i+2)%4] < 0) && (MPU_values[(i+3)%4] < 0)) ||
-			((MPU_values[i] < 0) && (MPU_values[(i+1)%4] > 0) && (MPU_values[(i+2)%4] > 0) && (MPU_values[(i+3)%4] > 0)))
+        if(b[i] && !b[(i+1)%4] && !b[(i+2)%4] && !b[(i+3)%4] || !b[i] && b[(i+1)%4] && b[(i+2)%4] && b[(i+3)%4])
         {
 
-            vec3 p0 = findRoot(MPU_values[i], MPU_values[(i+1)%4], p[i], p[(i+1)%4]);
-            vec3 p1 = findRoot(MPU_values[i], MPU_values[(i+2)%4], p[i], p[(i+2)%4]);
-            vec3 p2 = findRoot(MPU_values[i], MPU_values[(i+3)%4], p[i], p[(i+3)%4]);
+            vec3 p0 = findRootR(function, isoValue, p[i], p[(i+1)%4]);
+            vec3 p1 = findRootR(function, isoValue, p[i], p[(i+2)%4]);
+            vec3 p2 = findRootR(function, isoValue, p[i], p[(i+3)%4]);
 
-            vec3 n0 = glm::normalize(-(gradients[i] * abs(MPU_values[(i+1)%4]) + gradients[(i+1)%4] *
-				abs(MPU_values[i]))/(abs(MPU_values[(i+1)%4]) + abs(MPU_values[i])));
-            vec3 n1 = glm::normalize(-(gradients[i] * abs(MPU_values[(i+2)%4]) + gradients[(i+2)%4] *
-				abs(MPU_values[i]))/(abs(MPU_values[(i+2)%4]) + abs(MPU_values[i])));
-            vec3 n2 = glm::normalize(-(gradients[i] * abs(MPU_values[(i+3)%4]) + gradients[(i+3)%4] *
-				abs(MPU_values[i]))/(abs(MPU_values[(i+3)%4]) + abs(MPU_values[i])));
+
+            vec3 n0 = glm::normalize(-function.EvalDev(p0));
+            vec3 n1 = glm::normalize(-function.EvalDev(p1));
+            vec3 n2 = glm::normalize(-function.EvalDev(p2));
+
 
             mesh.m_positions.push_back(p0);
             mesh.m_positions.push_back(p1);
@@ -289,22 +277,18 @@ void Mesh_Reconstruction::ProcessTetrahedron(Mesh& mesh, const vector<vec3> grad
                 cerr << "indices are wrong ! " << endl;
 
 
-            if(((MPU_values[i] > 0) && (MPU_values[j] > 0) && (MPU_values[k] < 0) && (MPU_values[l] < 0)) ||
-				((MPU_values[i] < 0) && (MPU_values[j] < 0) && (MPU_values[k] > 0) && (MPU_values[l] > 0)))
+            if(b[i] && b[j] && !b[k] && !b[l] || !b[i] && !b[j] && b[k] && b[l])
             {
-                vec3 p0 = findRoot(MPU_values[i], MPU_values[k], p[i], p[k]);
-                vec3 p1 = findRoot(MPU_values[i], MPU_values[l], p[i], p[l]);
-                vec3 p2 = findRoot(MPU_values[j], MPU_values[k], p[j], p[k]);
-                vec3 p3 = findRoot(MPU_values[j], MPU_values[l], p[j], p[l]);
+                vec3 p0 = findRootR(function, isoValue, p[i], p[k]);
+                vec3 p1 = findRootR(function, isoValue, p[i], p[l]);
+                vec3 p2 = findRootR(function, isoValue, p[j], p[k]);
+                vec3 p3 = findRootR(function, isoValue, p[j], p[l]);
 
-                vec3 n0 = glm::normalize(-(gradients[i] * abs(MPU_values[k]) + gradients[k] *
-					abs(MPU_values[i]))/(abs(MPU_values[k]) + abs(MPU_values[i])));
-                vec3 n1 = glm::normalize(-(gradients[i] * abs(MPU_values[l]) + gradients[l] *
-					abs(MPU_values[i]))/(abs(MPU_values[l]) + abs(MPU_values[i])));
-                vec3 n2 = glm::normalize(-(gradients[j] * abs(MPU_values[k]) + gradients[k] *
-					abs(MPU_values[j]))/(abs(MPU_values[k]) + abs(MPU_values[j])));
-                vec3 n3 = glm::normalize(-(gradients[j] * abs(MPU_values[l]) + gradients[l] *
-					abs(MPU_values[j]))/(abs(MPU_values[l]) + abs(MPU_values[j])));
+                vec3 n0 = glm::normalize(-function.EvalDev(p0));
+                vec3 n1 = glm::normalize(-function.EvalDev(p1));
+                vec3 n2 = glm::normalize(-function.EvalDev(p2));
+                vec3 n3 = glm::normalize(-function.EvalDev(p3));
+
 
                 mesh.m_positions.push_back(p0);
                 mesh.m_positions.push_back(p1);
@@ -346,5 +330,6 @@ void Mesh_Reconstruction::ProcessTetrahedron(Mesh& mesh, const vector<vec3> grad
         }
     }
 
-    // cerr << "no solution found in marching tetrahedron !!" << endl;
+    cerr << "no solution found in marching tetrahedron !!" << endl;
 }
+

@@ -40,7 +40,7 @@ Node::Node(const Node& n){
 // TODO : Find a better and faster way to calculate this.
 void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_normals, vec3 q, vector<vec3> &returnValues, vector<vec3> &returnNormals){
 
-	int minimumDistance = 1000000;
+	float minimumDistance = 1000000;
 
 	vector<int> return_indices(6);
 	bool flag;
@@ -86,8 +86,8 @@ void Node::getClosestPointsInBall(vector<vec3> &m_vertices, vector<vec3> &m_norm
 			float n = norm(m_vertices[i], q);
 			if (n < minimumDistance){
 				minimumDistance = n;
-				return_indices[p] = i;
-			}
+				return_indices[p] = i; 
+            }
 		}
 		returnValues[p] = m_vertices[return_indices[p]];
 		returnNormals[p] = m_normals[return_indices[p]];
