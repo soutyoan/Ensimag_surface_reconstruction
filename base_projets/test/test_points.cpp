@@ -9,8 +9,8 @@
 
 int main(){
     Node n; 
-    vector<vec3> returnValues; 
-    vector<vec3> returnNormals; 
+    vector<vec3> returnValues(6); 
+    vector<vec3> returnNormals(6); 
     vector<vec3> m_vertices(60); 
     vector<vec3> m_normals(60);
     vec3 q(1, 1, 1); 
@@ -21,7 +21,8 @@ int main(){
     n.indices = indi; 
     for (int i = 0; i < 60; i++){
         if (i%5 == 0){
-            m_vertices[i] = vec3(1.2, 1.2, 1.2); 
+            m_vertices[i] = vec3(1.2 + i/60.0, 1.2 + i/60.0, 1.2 + i/60.0); 
+            cout << i << " " << 1.2 + i/60.0 << endl; 
         }
     }
     n.getClosestPointsInBall(m_vertices, m_normals, q, returnValues, returnNormals); 
