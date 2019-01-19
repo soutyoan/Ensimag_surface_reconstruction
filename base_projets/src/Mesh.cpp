@@ -200,9 +200,9 @@ void Mesh::CreateCube(Mesh& mesh)
 
 void Mesh::CreateCube2(Mesh& mesh)
 {
-    for(float x = -1.0; x < 3.0; x += 2.0)
-        for(float y = -1.0; y < 3.0; y += 2.0)
-            for(float z = -1.0; z < 3.0; z += 2.0)
+    for(float x = -1.0; x < 3.0; x += 0.05)
+        for(float y = -1.0; y < 3.0; y += 0.05)
+            for(float z = -1.0; z < 3.0; z += 0.05)
             {
                 mesh.m_positions.push_back(vec3(x, y, z));
                 mesh.m_normals.push_back(glm::normalize(vec3(x, y, z)));

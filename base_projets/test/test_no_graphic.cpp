@@ -41,7 +41,8 @@ int main()
     BarthFunction bf;
     float x = 1.8;
     Mesh_Reconstruction m;
-    m.CreateSphere(m, 500, 500);
+    m.CreateSphere(m, 300, 300);
+    // m.CreateCube2(m);
     // m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
 
     //m.Normalize();
@@ -52,12 +53,12 @@ int main()
     cout << "size indices " << m.getIndicesSize() << endl;
     cout << "size normals" << m.getNormalsSize() << endl;
 
-    m.GetVertices(50, m, 0.2); 
+    m.GetVertices(80, m, 0.1);
 
     cout << "size vertices " << m.getVerticesSize() << endl;
     cout << "size indices " << m.getIndicesSize() << endl;
 
-    //m.RemoveDouble(0.001);
+    m.RemoveDouble(0.001);
     m.Normalize();
     m.ComputeNormals();
     m.ColorFromNormals();

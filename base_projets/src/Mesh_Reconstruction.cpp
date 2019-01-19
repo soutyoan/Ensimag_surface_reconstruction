@@ -45,7 +45,7 @@ float Mesh_Reconstruction::evaluateMPUapprox(Mesh& mesh, glm::vec3 x, float eps0
 	// cout << "test " << SwqSw[1] << " " <<SwqSw[0] << " 0" << endl;
 
 	if ((SwqSw[0] == 0) || (std::isinf(SwqSw[0])) || (std::isinf(SwqSw[1]))){
-		//cout << "d0"; 
+		//cout << "d0";
 		return 0;
 	}
 
@@ -93,8 +93,9 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 
 	Box space(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
 
-	vector<float> MPUValues((sampling + 5) * (sampling + 5) * (sampling + 5));
-	vector<vec3> points; 
+	int addBoundingBox = sampling;
+
+	vector<float> MPUValues((sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox));
 
 	int i = 0; int j = 0; int k = 0;
 	int totalZeros = 0;
@@ -102,26 +103,24 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 	root.b = space;
 
 	// Construction of the space
-	for (float x = space.x - 2 * (space.lx/sampling); x <= space.x + space.lx + 2 * (space.lx/sampling); x+= space.lx/sampling){
+	for (float x = space.x - addBoundingBox * (space.lx/sampling); x <= space.x + space.lx + addBoundingBox * (space.lx/sampling); x+= space.lx/sampling){
 		// cout << "Tree creation i" << i << " out of " << sampling << endl;
 		j = 0;
 		cout << "------------------------------------------------------" << endl;
-		for (float y = space.y - 2 * (space.ly/sampling); y <= space.y + space.ly + 2 * (space.ly/sampling); y+= space.ly/sampling){
+		for (float y = space.y - addBoundingBox * (space.ly/sampling); y <= space.y + space.ly + addBoundingBox * (space.ly/sampling); y+= space.ly/sampling){
 			// cout << "Tree creation j " << j << " out of " << sampling << endl;
 			k = 0;
-			for (float z = space.z - 2 * (space.lz/sampling); z <= space.z + space.lz + 2 * (space.lz/sampling); z+= space.lz/sampling){
+			for (float z = space.z - addBoundingBox * (space.lz/sampling); z <= space.z + space.lz + addBoundingBox * (space.lz/sampling); z+= space.lz/sampling){
 				// cout << "Tree creation k " << k << " out of " << sampling << endl;
-				MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] =
+				MPUValues[i * (sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox) + j * (sampling + 1 + 2 * addBoundingBox) + k] =
 					evaluateMPUapprox(mesh, vec3(x, y, z), eps0);
 				// cout << "value " << MPUValues[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] << endl;
-				if (MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] > 0){
+				if (MPUValues[i * (sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox) + j * (sampling + 1 + 2 * addBoundingBox) + k] > 0){
 					cout << "+ ";
-                    // MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] = 1; 
-					points.push_back(vec3(x, y, z)); 
-				} else if (MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] < 0) {
+                    // MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] = 1;
+				} else if (MPUValues[i * (sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox) + j * (sampling + 1 + 2 * addBoundingBox) + k] < 0) {
 					cout << "- ";
-					points.push_back(vec3(x, y, z)); 
-                    // MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] = -1; 
+                    // MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] = -1;
 				} else {
 					cout << "  ";
 					totalZeros ++;
@@ -139,15 +138,47 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 
 	// We destroy the indices and the vertices of m
 	mesh.clearIndicesAndVertices();
+  
+	int res = 1;
 
-	MPUFunction f; 
-	f.space = space; 
-	f.values = MPUValues; 
-
-	vec3 points_arr[points.size()];
-	copy(points.begin(), points.end(), points_arr);
-
-	mesh.ProcessTetrahedronR(mesh, f, 0, points_arr); 
+	for (int i = 0; i < sampling + 2 * addBoundingBox - res; i+=res){
+		cout << "Marching cubes " << i << " out of " << sampling << endl;
+		for (int j = 0; j < sampling + 2 * addBoundingBox - res; j+=res){
+			for (int k = 0; k < sampling + 2 * addBoundingBox - res; k+=res){
+				Box b(space.x + (i - addBoundingBox) * (float)space.lx/sampling,
+					space.y + (j - addBoundingBox) * (float)space.ly/sampling,
+					space.z + (k - addBoundingBox) * (float)space.lz/sampling,
+					res * space.lx/sampling, res * space.ly/sampling, res * space.lz/sampling);
+				vector<float> values(8);
+				vector<vec3> points = b.getListPoints();
+				vector<vec3> gradients(8);
+				for (int x = 0; x < 2; x++){
+					for (int y = 0; y < 2; y++){
+						for (int z = 0; z < 2; z++){
+							values[x * 2 * 2 + y * 2 + z] = MPUValues[(x * res+i) *
+								(sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox) +
+								(y*res+j) * (sampling + 1 + 2 * addBoundingBox) + k+z*res];
+							float x_i_1 = MPUValues[(x*res+i+1) *
+								(sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox) + (y*res+j) *
+								(sampling + 1 + 2 * addBoundingBox) + k+z*res];
+							float x_i = MPUValues[(x*res+i) *
+									(sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox) +
+									(y*res+j) * (sampling + 1 + 2 * addBoundingBox) + k+z*res];
+							float y_i_1 = MPUValues[(x*res+i) *
+									(sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox) +
+									(y*res+j+1) * (sampling + 1 + 2 * addBoundingBox) + k+z*res];
+							float z_i_1 = MPUValues[(x*res+i) *
+									(sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox) +
+									(y*res+j) * (sampling + 1 + 2 * addBoundingBox) + k+z*res+1];
+							vec3 g = vec3(x_i_1 - x_i, y_i_1 - x_i, z_i_1 - x_i); // discretisation of the gradient
+							gradients[x * 2 * 2 + y * 2 + z] = g;
+						}
+					}
+				}
+				mesh.ProcessCube(mesh, gradients, values, points);
+			}
+		}
+	}
 }
 
 vec3 findRootR(const ImplicitFunction& function, const float isoValue, const vec3& p0, const vec3& p1, unsigned nb_iter = 10)
@@ -173,7 +204,7 @@ void Mesh_Reconstruction::ProcessTetrahedronR(Mesh& mesh, const ImplicitFunction
     bool b[4] = {function.Eval(p[0]) > isoValue, function.Eval(p[1]) > isoValue, function.Eval(p[2]) > isoValue, function.Eval(p[3]) > isoValue};
 
     unsigned int N = mesh.m_positions.size();
-    if(!b[0] && !b[1] && !b[2] && !b[3] || b[0] && b[1] && b[2] && b[3])
+    if((!b[0] && !b[1] && !b[2] && !b[3]) || (b[0] && b[1] && b[2] && b[3]))
     {
         return;
     }
