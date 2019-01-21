@@ -50,7 +50,7 @@ const bool OUTPUT = true;
 
 void view_control(mat4& view_matrix, float dx);
 
-int main()
+int main(int argc, char *argv[])
 {
 
     cout << "Starting program..." << endl;
@@ -150,7 +150,7 @@ int main()
     cout << "size indices " << m.getIndicesSize() << endl;
     cout << "size normals" << m.getNormalsSize() << endl;
 
-    m.GetVertices(20, m, 0.1);
+    m.GetVertices(atoi(argv[1]), m, atof(argv[2]));
 
     cout << "size vertices " << m.getVerticesSize() << endl;
     cout << "size indices " << m.getIndicesSize() << endl;
