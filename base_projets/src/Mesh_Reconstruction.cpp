@@ -106,7 +106,7 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 	for (float x = space.x - addBoundingBox * (space.lx/sampling); x <= space.x + space.lx + addBoundingBox * (space.lx/sampling); x+= space.lx/sampling){
 		// cout << "Tree creation i" << i << " out of " << sampling << endl;
 		j = 0;
-		cout << "------------------------------------------------------" << endl;
+		// cout << "------------------------------------------------------" << endl;
 		for (float y = space.y - addBoundingBox * (space.ly/sampling); y <= space.y + space.ly + addBoundingBox * (space.ly/sampling); y+= space.ly/sampling){
 			// cout << "Tree creation j " << j << " out of " << sampling << endl;
 			k = 0;
@@ -116,21 +116,21 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 					evaluateMPUapprox(mesh, vec3(x, y, z), eps0);
 				// cout << "value " << MPUValues[i * (sampling + 1) * (sampling + 1) + j * (sampling + 1) + k] << endl;
 				if (MPUValues[i * (sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox) + j * (sampling + 1 + 2 * addBoundingBox) + k] > 0){
-					cout << "+ ";
+					// cout << "+ ";
                     // MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] = 1;
 				} else if (MPUValues[i * (sampling + 1 + 2 * addBoundingBox) * (sampling + 1 + 2 * addBoundingBox) + j * (sampling + 1 + 2 * addBoundingBox) + k] < 0) {
-					cout << "- ";
+					// cout << "- ";
                     // MPUValues[i * (sampling + 5) * (sampling + 5) + j * (sampling + 5) + k] = -1;
 				} else {
-					cout << "  ";
+					// cout << "  ";
 					totalZeros ++;
 				}
 				k ++;
 			}
-			cout << "|" << endl;
+			// cout << "|" << endl;
 			j++;
 		}
-		cout << endl;
+		// cout << endl;
 		i++;
 	}
 
@@ -142,7 +142,6 @@ void Mesh_Reconstruction::GetVertices(int sampling, Mesh_Reconstruction &mesh, f
 	int res = 1;
 
 	for (int i = 0; i < sampling + 2 * addBoundingBox - res; i+=res){
-		cout << "Marching cubes " << i << " out of " << sampling << endl;
 		for (int j = 0; j < sampling + 2 * addBoundingBox - res; j+=res){
 			for (int k = 0; k < sampling + 2 * addBoundingBox - res; k+=res){
 				Box b(space.x + (i - addBoundingBox) * (float)space.lx/sampling,

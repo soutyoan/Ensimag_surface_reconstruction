@@ -150,7 +150,7 @@ int main()
     cout << "size indices " << m.getIndicesSize() << endl;
     cout << "size normals" << m.getNormalsSize() << endl;
 
-    m.GetVertices(80, m, 0.1);
+    m.GetVertices(20, m, 0.1);
 
     cout << "size vertices " << m.getVerticesSize() << endl;
     cout << "size indices " << m.getIndicesSize() << endl;
