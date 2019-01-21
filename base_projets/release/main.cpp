@@ -139,6 +139,7 @@ int main(int argc, char *argv[])
     BarthFunction bf;
     float x = 1.8;
     Mesh_Reconstruction m;
+
     m.CreateSphere(m, 200, 200);
     // m.CreateIsoSurface(m, bf, -0.2, -x, x, -x, x, -x ,x, 100, 100, 100);
 
@@ -150,6 +151,7 @@ int main(int argc, char *argv[])
     cout << "size indices " << m.getIndicesSize() << endl;
     cout << "size normals" << m.getNormalsSize() << endl;
 
+    clock_t begin_time = clock();
     m.GetVertices(atoi(argv[1]), m, atof(argv[2]));
 
     cout << "size vertices " << m.getVerticesSize() << endl;
@@ -190,7 +192,7 @@ int main(int argc, char *argv[])
 
     cout << "Initializing done." << endl;
     cout << endl;
-
+    cout << "Time execution : " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << " sec " <<endl;
 
 
     //==================================================

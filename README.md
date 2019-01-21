@@ -3,8 +3,11 @@
 Ce dossier contient les sources d'un projet de reconstruction de surface
 à partir d'un nuage de point.
 
-La méthode de reconstruction est décrite dans le papier que vous trouverez
-sous doc/mpu_implicits.pdf
+
+## Structure
+- doc/mpu_implicits.pdf : article utilisé pour l'implémentation de la reconstruction
+- doc/report.pdf : compte-rendu du projet
+- base_projets : implémentation du projet
 
 ## Compilation et exécution
 ```console
